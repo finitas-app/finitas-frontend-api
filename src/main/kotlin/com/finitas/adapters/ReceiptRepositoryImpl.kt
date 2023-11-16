@@ -9,6 +9,7 @@ import com.finitas.domain.model.ReceiptParseErrorResult
 import com.finitas.domain.model.ReceiptParseSuccessResult
 import com.finitas.domain.ports.ReceiptRepository
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
@@ -29,6 +30,9 @@ class ReceiptRepositoryImpl(private val urlProvider: UrlProvider) : ReceiptRepos
                         },
                     )
                 )
+                timeout {
+                    requestTimeoutMillis = urlProvider.RECEIPT_PARSING_TIMEOUT
+                }
             }
         } catch (exception: Exception) {
             throw InternalServerException("Receipt parsing ended up with error", exception)
