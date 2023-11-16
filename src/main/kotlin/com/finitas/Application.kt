@@ -1,5 +1,7 @@
 package com.finitas
 
+import com.finitas.domain.api.configureRouting
+import com.finitas.domain.api.receiptRouting
 import com.finitas.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -11,6 +13,8 @@ fun main() {
 }
 
 fun Application.module() {
+    configureDependencyInjection()
     configureSerialization()
     configureRouting()
+    configureExceptions()
 }
