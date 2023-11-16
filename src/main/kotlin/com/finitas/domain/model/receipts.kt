@@ -18,4 +18,7 @@ data class Receipt(val file: ByteArray) {
 }
 
 @Serializable
-data class ReceiptParseResult(val result: Map<String, String>)
+data class ReceiptParseSuccessResult(val result: Map<String, String>)
+
+@Serializable
+data class ReceiptParseErrorResult(val detail: String)
