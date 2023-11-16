@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 
 
-
 suspend fun Application.handleException(call: ApplicationCall, exception: Exception) = when (exception) {
     is BaseException -> {
         log.error("Base exception: ${exception.message}", exception.cause)

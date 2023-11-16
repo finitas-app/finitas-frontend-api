@@ -11,5 +11,5 @@ data class ErrorResponse(
 enum class ErrorCode {
     NOT_FOUND,
     GENERIC_ERROR,
-    NOT_FILE_PROVIDED,
+    NO_FILE_PROVIDED,
 }

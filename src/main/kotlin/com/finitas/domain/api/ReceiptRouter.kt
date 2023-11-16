@@ -10,7 +10,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import kotlin.math.log
 
 fun Route.receiptRouting() {
     val service by inject<ReceiptService>()
@@ -18,7 +17,7 @@ fun Route.receiptRouting() {
     route("/receipts") {
         post("/parse") {
             val receipt = call.receiveMultipart().toByteArray()?.let { Receipt(it) }
-                ?: throw BadRequestException("No file provided.", ErrorCode.NOT_FILE_PROVIDED)
+                ?: throw BadRequestException("No file provided.", ErrorCode.NO_FILE_PROVIDED)
             call.respond(service.parseReceipt(receipt))
         }
     }
