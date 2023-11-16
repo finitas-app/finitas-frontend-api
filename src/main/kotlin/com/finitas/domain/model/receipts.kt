@@ -1,7 +1,6 @@
 package com.finitas.domain.model
 
 import kotlinx.serialization.Serializable
-import java.io.File
 
 data class Receipt(val file: ByteArray) {
     override fun equals(other: Any?): Boolean {
