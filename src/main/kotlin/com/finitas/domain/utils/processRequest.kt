@@ -1,9 +1,7 @@
 package com.finitas.domain.utils
 
-import com.finitas.config.Logger
-import com.finitas.exceptions.InternalServerException
+import com.finitas.config.exceptions.InternalServerException
 import io.ktor.http.content.*
-import java.io.File
 
 suspend fun MultiPartData.toByteArray(): ByteArray? {
     try {
@@ -16,10 +14,7 @@ suspend fun MultiPartData.toByteArray(): ByteArray? {
         }
 
         return result
-    }
-    catch (exception: Exception) {
-        Logger.error("Failed to convert receipt to file")
-        exception.stackTrace.forEach { traceLine -> Logger.error(traceLine.toString())}
-        throw InternalServerException("Failed to convert receipt to file")
+    } catch (exception: Exception) {
+        throw InternalServerException("Failed to convert receipt to file", exception)
     }
 }

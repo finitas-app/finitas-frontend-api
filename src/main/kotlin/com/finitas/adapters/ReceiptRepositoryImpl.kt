@@ -1,21 +1,21 @@
-package com.finitas.adapters.repositories
+package com.finitas.adapters
 
-import com.finitas.config.Config
 import com.finitas.config.Logger
 import com.finitas.config.client
+import com.finitas.config.exceptions.InternalServerException
+import com.finitas.config.urls.DefaultUrls
 import com.finitas.domain.model.Receipt
 import com.finitas.domain.model.ReceiptParseResult
 import com.finitas.domain.ports.ReceiptRepository
-import com.finitas.exceptions.InternalServerException
 import io.ktor.client.call.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 
-class ReceiptRepositoryImpl: ReceiptRepository {
+class ReceiptRepositoryImpl(private val defaultUrls: DefaultUrls) : ReceiptRepository {
     override suspend fun parseReceipt(receipt: Receipt): ReceiptParseResult {
         return try {
             client.submitFormWithBinaryData(
-                url = Config.RECEIPT_SERVICE_HOST_URL,
+                url = defaultUrls.RECEIPT_SERVICE_HOST_URL,
                 formData {
                     append("receipt", receipt.file, Headers.build {
                         append(HttpHeaders.ContentType, "image/png")
@@ -23,9 +23,8 @@ class ReceiptRepositoryImpl: ReceiptRepository {
                     })
                 },
             ).body<ReceiptParseResult>()
-        } catch (exception: Exception)  {
-            Logger.error("Receipt parsing ended up with error", exception)
-            throw InternalServerException("Failed to parse receipt")
+        } catch (exception: Exception) {
+            throw InternalServerException("Receipt parsing ended up with error", exception)
         }
     }
 }

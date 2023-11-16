@@ -1,10 +1,14 @@
 package com.finitas.config
 
-object Logger {
-    fun info(message: String) {
-        println("INFO: $message")
-    }
-    fun error(message: String, cause: Throwable? = null) {
-        println("ERROR: $message, cause: $cause")
-    }
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import kotlin.reflect.KProperty
+
+class Logger {
+    private var logger: Logger? = null
+
+    operator fun getValue(thisRef: Any, property: KProperty<*>): Logger =
+        logger ?: synchronized(this) {
+            logger ?: LoggerFactory.getLogger(thisRef::class.java).also { logger = it }
+        }
 }
