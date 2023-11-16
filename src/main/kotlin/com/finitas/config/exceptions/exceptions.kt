@@ -3,9 +3,9 @@ package com.finitas.config.exceptions
 import io.ktor.http.*
 
 open class BaseException(
-    override val message: String,
+    message: String,
     val errorCode: ErrorCode,
-    override val cause: Exception? = null,
+    cause: Exception? = null,
     val statusCode: HttpStatusCode = HttpStatusCode.InternalServerError,
 ) : Exception(message, cause)
 
