@@ -8,15 +8,13 @@ import com.finitas.domain.model.ReceiptParseResult
 import com.finitas.domain.ports.ReceiptRepository
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.content.*
 import kotlinx.serialization.Serializable
 
 class ReceiptRepositoryImpl(private val urlProvider: UrlProvider) : ReceiptRepository {
 
     override suspend fun parseReceipt(receipt: ReceiptBinaryData): ReceiptParseResult {
         return try {
-            val res = client.post(urlProvider.RECEIPT_SERVICE_HOST_URL){
+            val res = client.post(urlProvider.RECEIPT_SERVICE_HOST_URL) {
                 setBody(receipt.toMultiPartFormDataContent())
             }
             if (res.status.value == 200)
