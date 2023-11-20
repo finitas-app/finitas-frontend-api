@@ -1,5 +1,6 @@
 package com.finitas.domain.api
 
+import com.finitas.domain.model.ReceiptBinaryData
 import com.finitas.domain.services.ReceiptService
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -12,7 +13,7 @@ fun Route.receiptRouting() {
 
     route("/receipts") {
         post("/parse") {
-            val receipt = call.receiveMultipart()
+            val receipt = ReceiptBinaryData(call.receiveMultipart())
             call.respond(service.parseReceipt(receipt))
         }
     }
