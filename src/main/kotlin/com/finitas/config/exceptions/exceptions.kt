@@ -11,7 +11,7 @@ open class BaseException(
 
 class NotFoundException(
     message: String = "Not found",
-    errorCode: ErrorCode = ErrorCode.NOT_FOUND,
+    errorCode: ErrorCode,
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.NotFound)
 
@@ -26,3 +26,12 @@ class InternalServerException(
     cause: Exception? = null,
     errorCode: ErrorCode = ErrorCode.GENERIC_ERROR,
 ) : BaseException(message, errorCode, cause)
+
+class ExternalErrorException(
+    errorResponse: ErrorResponse,
+    statusCode: HttpStatusCode,
+) : BaseException(
+    message = errorResponse.errorMessage ?: errorResponse.errorCode.name,
+    errorCode = errorResponse.errorCode,
+    statusCode = statusCode,
+)
