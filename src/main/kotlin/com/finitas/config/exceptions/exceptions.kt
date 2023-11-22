@@ -27,6 +27,12 @@ class UnauthorizedException(
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.Unauthorized)
 
+class ConflictException(
+    message: String = "Conflict",
+    errorCode: ErrorCode,
+    cause: Exception? = null,
+) : BaseException(message, errorCode, cause, HttpStatusCode.Conflict)
+
 class InternalServerException(
     message: String = "Internal Server Error",
     cause: Exception? = null,
