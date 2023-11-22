@@ -49,8 +49,8 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
                 }.body<Auth0TokenResponse>()
                 .access_token
         } catch (cause: Exception) {
-            logger.error("Failed to generate management API token. Cause - $cause")
-            throw InternalServerException(errorCode = ErrorCode.CONFIGURATION_ERROR)
+            logger.error("Failed to generate management API token.")
+            throw InternalServerException(errorCode = ErrorCode.CONFIGURATION_ERROR, cause = cause)
         }
     }
 }
