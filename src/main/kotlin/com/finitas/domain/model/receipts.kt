@@ -11,6 +11,3 @@ value class ReceiptBinaryData(val raw: MultiPartData) {
 
 @Serializable
 data class ReceiptParseResult(val result: Map<String, String>)
-
-@Serializable
-data class ReceiptParseErrorResult(val detail: String)
