@@ -93,8 +93,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
             return response.body<Auth0TokenResponse>().toAuthUserResponse()
         }
 
-        logger.error("Error response: ${response.bodyAsText()}")
-        logger.error("HTTP code: ${response.status}")
+        logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
 
         throw when (response.status) {
             HttpStatusCode.Forbidden -> UnauthorizedException(message = "Login failed")
