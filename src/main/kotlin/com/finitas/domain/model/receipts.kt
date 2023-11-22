@@ -1,24 +1,16 @@
 package com.finitas.domain.model
 
+import io.ktor.client.request.forms.*
+import io.ktor.http.content.*
 import kotlinx.serialization.Serializable
 
-data class Receipt(val file: ByteArray) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Receipt
-
-        return file.contentEquals(other.file)
-    }
-
-    override fun hashCode(): Int {
-        return file.contentHashCode()
-    }
+@JvmInline
+value class ReceiptBinaryData(val raw: MultiPartData) {
+    suspend fun toMultiPartFormDataContent() = MultiPartFormDataContent(raw.readAllParts())
 }
 
 @Serializable
-data class ReceiptParseSuccessResult(val result: Map<String, String>)
+data class ReceiptParseResult(val result: Map<String, String>)
 
 @Serializable
 data class ReceiptParseErrorResult(val detail: String)

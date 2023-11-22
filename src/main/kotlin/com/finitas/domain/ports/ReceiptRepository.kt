@@ -1,8 +1,8 @@
 package com.finitas.domain.ports
 
-import com.finitas.domain.model.Receipt
-import com.finitas.domain.model.ReceiptParseSuccessResult
+import com.finitas.domain.model.ReceiptBinaryData
+import com.finitas.domain.model.ReceiptParseResult
 
 interface ReceiptRepository {
-    suspend fun parseReceipt(receipt: Receipt): ReceiptParseSuccessResult
+    suspend fun parseReceipt(receipt: ReceiptBinaryData): ReceiptParseResult
 }

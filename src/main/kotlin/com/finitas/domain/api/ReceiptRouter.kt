@@ -1,10 +1,7 @@
 package com.finitas.domain.api
 
-import com.finitas.config.exceptions.BadRequestException
-import com.finitas.config.exceptions.ErrorCode
-import com.finitas.domain.model.Receipt
+import com.finitas.domain.model.ReceiptBinaryData
 import com.finitas.domain.services.ReceiptService
-import com.finitas.domain.utils.toByteArray
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,8 +13,7 @@ fun Route.receiptRouting() {
 
     route("/receipts") {
         post("/parse") {
-            val receipt = call.receiveMultipart().toByteArray()?.let { Receipt(it) }
-                ?: throw BadRequestException("No file provided.", ErrorCode.NO_FILE_PROVIDED)
+            val receipt = ReceiptBinaryData(call.receiveMultipart())
             call.respond(service.parseReceipt(receipt))
         }
     }
