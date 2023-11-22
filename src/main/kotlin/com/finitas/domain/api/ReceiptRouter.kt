@@ -6,6 +6,7 @@ import com.finitas.domain.model.Receipt
 import com.finitas.domain.services.ReceiptService
 import com.finitas.domain.utils.toByteArray
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -15,10 +16,12 @@ fun Route.receiptRouting() {
     val service by inject<ReceiptService>()
 
     route("/receipts") {
-        post("/parse") {
-            val receipt = call.receiveMultipart().toByteArray()?.let { Receipt(it) }
-                ?: throw BadRequestException("No file provided.", ErrorCode.NO_FILE_PROVIDED)
-            call.respond(service.parseReceipt(receipt))
+        authenticate {
+            post("/parse") {
+                val receipt = call.receiveMultipart().toByteArray()?.let { Receipt(it) }
+                    ?: throw BadRequestException("No file provided.", ErrorCode.NO_FILE_PROVIDED)
+                call.respond(service.parseReceipt(receipt))
+            }
         }
     }
 }

@@ -12,4 +12,5 @@ enum class ErrorCode {
     NOT_FOUND,
     GENERIC_ERROR,
     NO_FILE_PROVIDED,
+    AUTH_ERROR,
 }

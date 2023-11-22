@@ -21,6 +21,12 @@ class BadRequestException(
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.BadRequest)
 
+class UnauthorizedException(
+    message: String = "Unauthorized",
+    errorCode: ErrorCode = ErrorCode.AUTH_ERROR,
+    cause: Exception? = null,
+) : BaseException(message, errorCode, cause, HttpStatusCode.Unauthorized)
+
 class InternalServerException(
     message: String = "Internal Server Error",
     cause: Exception? = null,
