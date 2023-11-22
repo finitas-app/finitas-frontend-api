@@ -22,7 +22,7 @@ fun Application.configureAuth() {
             validate { credential ->
                 val containsAudience = credential.payload.audience.contains(urlProvider.AUTH0_FINITAS_API_AUDIENCE)
 
-                if(containsAudience) JWTPrincipal(credential.payload)
+                if (containsAudience) JWTPrincipal(credential.payload)
                 else null
             }
         }

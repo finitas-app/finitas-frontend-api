@@ -4,8 +4,8 @@ import com.finitas.adapters.AuthZeroRepositoryImpl
 import com.finitas.adapters.ReceiptRepositoryImpl
 import com.finitas.config.urls.DevelopmentUrls
 import com.finitas.config.urls.ProductionUrls
-import com.finitas.domain.ports.AuthRepository
 import com.finitas.config.urls.UrlProvider
+import com.finitas.domain.ports.AuthRepository
 import com.finitas.domain.ports.ReceiptRepository
 import com.finitas.domain.services.AuthService
 import com.finitas.domain.services.ReceiptService
