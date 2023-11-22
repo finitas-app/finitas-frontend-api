@@ -13,4 +13,5 @@ enum class ErrorCode {
     GENERIC_ERROR,
     NO_FILE_PROVIDED,
     AUTH_ERROR,
+    CONFIGURATION_ERROR,
 }

@@ -4,6 +4,7 @@ import com.finitas.domain.model.AuthUserRequest
 import com.finitas.domain.model.CreateUserRequest
 import com.finitas.domain.services.AuthService
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -22,6 +23,11 @@ fun Route.authRouting() {
             call.receive<CreateUserRequest>()
                 .let { service.signup(it) }
                 .let { call.respond(it) }
+        }
+        authenticate {
+            get("/test") {
+                call.respond("Success")
+            }
         }
     }
 }

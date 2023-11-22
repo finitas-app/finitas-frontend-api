@@ -18,7 +18,7 @@ fun Application.configureAuth() {
 
     install(Authentication) {
         jwt {
-            verifier(jwkProvider, urlProvider.AUTH0_DOMAIN)
+            verifier(jwkProvider, "${urlProvider.AUTH0_DOMAIN}/")
             validate { credential ->
                 val containsAudience = credential.payload.audience.contains(urlProvider.AUTH0_FINITAS_API_AUDIENCE)
 
