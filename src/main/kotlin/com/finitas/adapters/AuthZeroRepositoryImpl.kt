@@ -27,7 +27,7 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
     suspend fun get(): String {
         if (token == null) {
             mutex.withLock {
-                token = generate()
+                token = token ?: generate()
             }
         }
         return token!!
