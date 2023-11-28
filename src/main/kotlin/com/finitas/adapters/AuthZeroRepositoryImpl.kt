@@ -1,7 +1,7 @@
 package com.finitas.adapters
 
 import com.finitas.config.Logger
-import com.finitas.config.httpClient
+import com.finitas.config.externalHttpClient
 import com.finitas.config.exceptions.ConflictException
 import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.exceptions.InternalServerException
@@ -42,7 +42,7 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
 
     private suspend fun generate(): String {
         return try {
-            httpClient
+            externalHttpClient
                 .post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                     contentType(ContentType.Application.Json)
                     buildAuthApiRequest().apply { setBody(this) }
@@ -81,7 +81,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         val response: HttpResponse
 
         try {
-            response = httpClient.post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
+            response = externalHttpClient.post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                 contentType(ContentType.Application.Json)
                 buildLoginAuth0UserRequest(request).apply { setBody(this) }
             }
@@ -106,7 +106,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         val apiToken = managementApiToken.get()
 
         try {
-            response = httpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
+            response = externalHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
                 contentType(ContentType.Application.Json)
                 headers {
                     append("Authorization", "Bearer $apiToken")

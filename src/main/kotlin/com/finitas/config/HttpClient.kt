@@ -10,8 +10,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-
-val httpClient: HttpClient = HttpClient(CIO) {
+val internalHttpClient: HttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(
             Json {
@@ -27,5 +26,15 @@ val httpClient: HttpClient = HttpClient(CIO) {
                 throw ExternalErrorException(error, httpStatusCode)
             }
         }
+    }
+}
+
+val externalHttpClient = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json(
+            Json {
+                ignoreUnknownKeys = true
+            }
+        )
     }
 }
