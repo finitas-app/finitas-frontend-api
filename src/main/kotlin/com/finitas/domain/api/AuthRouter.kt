@@ -8,7 +8,12 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
+import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
+
+@Serializable
+data class Response(val message: String, val userId: String)
 
 fun Route.authRouting() {
     val service by inject<AuthService>()
@@ -26,7 +31,7 @@ fun Route.authRouting() {
         }
         authenticate {
             get("/test") {
-                call.respond("Success")
+                call.respond(Response("success", call.attributes[AttributeKey("userId")]))
             }
         }
     }

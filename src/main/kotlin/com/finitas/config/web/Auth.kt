@@ -5,6 +5,7 @@ import com.finitas.config.urls.UrlProvider
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.util.*
 import org.koin.ktor.ext.inject
 import java.util.concurrent.TimeUnit
 
@@ -21,7 +22,7 @@ fun Application.configureAuth() {
             verifier(jwkProvider, "${urlProvider.AUTH0_DOMAIN}/")
             validate { credential ->
                 val containsAudience = credential.payload.audience.contains(urlProvider.AUTH0_FINITAS_API_AUDIENCE)
-
+                this.attributes.put(AttributeKey("userId"), credential.payload.subject)
                 if (containsAudience) JWTPrincipal(credential.payload)
                 else null
             }
