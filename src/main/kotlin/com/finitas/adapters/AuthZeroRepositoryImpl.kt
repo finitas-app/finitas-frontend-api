@@ -1,7 +1,6 @@
 package com.finitas.adapters
 
 import com.finitas.config.Logger
-import com.finitas.config.externalHttpClient
 import com.finitas.config.exceptions.ConflictException
 import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.exceptions.InternalServerException
@@ -12,13 +11,28 @@ import com.finitas.domain.model.AuthUserResponse
 import com.finitas.domain.model.CreateUserRequest
 import com.finitas.domain.model.CreateUserResponse
 import com.finitas.domain.ports.AuthRepository
+import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+
+val auth0lHttpClient = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json(
+            Json {
+                ignoreUnknownKeys = true
+            }
+        )
+    }
+}
 
 class ManagementApiToken(private val urlProvider: UrlProvider) {
     private val logger by Logger()
@@ -42,7 +56,7 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
 
     private suspend fun generate(): String {
         return try {
-            externalHttpClient
+            auth0lHttpClient
                 .post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                     contentType(ContentType.Application.Json)
                     buildAuthApiRequest().apply { setBody(this) }
@@ -81,7 +95,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         val response: HttpResponse
 
         try {
-            response = externalHttpClient.post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
+            response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                 contentType(ContentType.Application.Json)
                 buildLoginAuth0UserRequest(request).apply { setBody(this) }
             }
@@ -106,7 +120,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         val apiToken = managementApiToken.get()
 
         try {
-            response = externalHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
+            response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
                 contentType(ContentType.Application.Json)
                 headers {
                     append("Authorization", "Bearer $apiToken")
