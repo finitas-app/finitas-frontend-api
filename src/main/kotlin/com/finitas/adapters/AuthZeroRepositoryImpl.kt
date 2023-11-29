@@ -21,10 +21,11 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-val auth0lHttpClient = HttpClient(CIO) {
+private val auth0lHttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(
             Json {
@@ -34,7 +35,7 @@ val auth0lHttpClient = HttpClient(CIO) {
     }
 }
 
-class ManagementApiToken(private val urlProvider: UrlProvider) {
+private class ManagementApiToken(private val urlProvider: UrlProvider) {
     private val logger by Logger()
     private var token: String? = null
     private val mutex = Mutex()
@@ -49,9 +50,9 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
 
     private fun buildAuthApiRequest() = LoginAuth0UserRequestBody(
         audience = "${urlProvider.AUTH0_DOMAIN}/api/v2/",
-        client_id = urlProvider.AUTH0_CLIENT_ID,
-        client_secret = urlProvider.AUTH0_CLIENT_SECRET,
-        grant_type = "client_credentials",
+        clientId = urlProvider.AUTH0_CLIENT_ID,
+        clientSecret = urlProvider.AUTH0_CLIENT_SECRET,
+        grantType = "client_credentials",
     )
 
     private suspend fun generate(): String {
@@ -61,7 +62,7 @@ class ManagementApiToken(private val urlProvider: UrlProvider) {
                     contentType(ContentType.Application.Json)
                     buildAuthApiRequest().apply { setBody(this) }
                 }.body<Auth0TokenResponse>()
-                .access_token
+                .accessToken
         } catch (cause: Exception) {
             logger.error("Failed to generate management API token.")
             throw InternalServerException(errorCode = ErrorCode.CONFIGURATION_ERROR, cause = cause)
@@ -78,9 +79,9 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         username = request.email,
         password = request.password,
         audience = urlProvider.AUTH0_FINITAS_API_AUDIENCE,
-        client_id = urlProvider.AUTH0_CLIENT_ID,
-        client_secret = urlProvider.AUTH0_CLIENT_SECRET,
-        grant_type = "password",
+        clientId = urlProvider.AUTH0_CLIENT_ID,
+        clientSecret = urlProvider.AUTH0_CLIENT_SECRET,
+        grantType = "password",
         scope = "openid"
     )
 
@@ -154,9 +155,12 @@ data class LoginAuth0UserRequestBody(
     val username: String? = null,
     val password: String? = null,
     val audience: String,
-    val client_id: String,
-    val client_secret: String,
-    val grant_type: String,
+    @SerialName("client_id")
+    val clientId: String,
+    @SerialName("client_secret")
+    val clientSecret: String,
+    @SerialName("grant_type")
+    val grantType: String,
     val scope: String? = null
 )
 
@@ -169,23 +173,26 @@ data class SignupAuth0UserRequestBody(
 
 @Serializable
 data class Auth0TokenResponse(
-    val access_token: String,
-    val expires_in: Int
+    @SerialName("access_token")
+    val accessToken: String,
+    @SerialName("expires_in")
+    val expiresIn: Int
 ) {
     fun toAuthUserResponse() =
         AuthUserResponse(
-            accessToken = access_token,
-            expires = expires_in
+            accessToken = accessToken,
+            expires = expiresIn
         )
 }
 
 @Serializable
 data class SignupAuth0UserResponse(
-    val user_id: String,
+    @SerialName("user_id")
+    val userId: String,
     val nickname: String,
 ) {
     fun toCreateUserResponse() = CreateUserResponse(
-        userId = user_id,
+        userId = userId,
         nickname = nickname
     )
 }

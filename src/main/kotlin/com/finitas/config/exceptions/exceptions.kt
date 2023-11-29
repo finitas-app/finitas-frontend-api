@@ -28,8 +28,8 @@ class UnauthorizedException(
 ) : BaseException(message, errorCode, cause, HttpStatusCode.Unauthorized)
 
 class ConflictException(
-    message: String = "Conflict",
     errorCode: ErrorCode,
+    message: String = "Conflict",
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.Conflict)
 

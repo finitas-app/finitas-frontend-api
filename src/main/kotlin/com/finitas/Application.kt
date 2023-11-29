@@ -19,8 +19,8 @@ fun main() {
 fun Application.module() {
     configureDependencyInjection()
     configureSerialization()
+    configureCORS()
     configureAuth()
     configureRouting()
     configureExceptions()
-    configureCORS()
 }
