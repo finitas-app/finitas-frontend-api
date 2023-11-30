@@ -6,4 +6,5 @@ object DevelopmentUrls : UrlProvider {
     override val AUTH0_FINITAS_API_AUDIENCE = "https://api.finitas.com"
     override val AUTH0_DOMAIN = "https://dev-ktqlmp7ts80r786t.us.auth0.com"
     override val RECEIPT_SERVICE_HOST_URL = "http://localhost:8081/parse"
+    override val RECEIPT_PARSING_TIMEOUT = 8000L
 }

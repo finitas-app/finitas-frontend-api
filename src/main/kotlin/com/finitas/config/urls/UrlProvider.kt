@@ -6,4 +6,5 @@ interface UrlProvider {
     val AUTH0_CLIENT_SECRET: String
     val AUTH0_FINITAS_API_AUDIENCE: String
     val AUTH0_DOMAIN: String
+    val RECEIPT_PARSING_TIMEOUT: Long
 }
