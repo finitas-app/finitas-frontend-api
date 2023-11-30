@@ -1,6 +1,7 @@
 package com.finitas.adapters
 
 import com.finitas.config.Logger
+import com.finitas.config.UUIDSerializer
 import com.finitas.config.exceptions.ConflictException
 import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.exceptions.InternalServerException
@@ -24,6 +25,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.util.UUID
 
 private val auth0lHttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
@@ -89,7 +91,8 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         SignupAuth0UserRequestBody(
             email = request.email,
             password = request.password,
-            connection = "Username-Password-Authentication"
+            connection = "Username-Password-Authentication",
+            userId = UUID.randomUUID()
         )
 
     override suspend fun loginUser(request: AuthUserRequest): AuthUserResponse {
@@ -169,6 +172,9 @@ data class SignupAuth0UserRequestBody(
     val email: String,
     val password: String,
     val connection: String,
+    @Serializable(with = UUIDSerializer::class)
+    @SerialName("user_id")
+    val userId: UUID,
 )
 
 @Serializable
@@ -192,7 +198,7 @@ data class SignupAuth0UserResponse(
     val nickname: String,
 ) {
     fun toCreateUserResponse() = CreateUserResponse(
-        userId = userId,
+        userId = userId.split("|")[1],
         nickname = nickname
     )
 }

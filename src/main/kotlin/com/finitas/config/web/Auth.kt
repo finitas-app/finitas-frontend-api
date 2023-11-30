@@ -22,7 +22,7 @@ fun Application.configureAuth() {
             verifier(jwkProvider, "${urlProvider.AUTH0_DOMAIN}/")
             validate { credential ->
                 val containsAudience = credential.payload.audience.contains(urlProvider.AUTH0_FINITAS_API_AUDIENCE)
-                this.attributes.put(AttributeKey("userId"), credential.payload.subject)
+                this.attributes.put(AttributeKey("userId"), credential.payload.subject.split("|")[1])
                 if (containsAudience) JWTPrincipal(credential.payload)
                 else null
             }
