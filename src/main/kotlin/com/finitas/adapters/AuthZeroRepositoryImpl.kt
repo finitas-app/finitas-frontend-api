@@ -50,7 +50,7 @@ private class ManagementApiToken(private val urlProvider: UrlProvider) {
         return token!!
     }
 
-    private fun buildAuthApiRequest() = LoginAuth0UserRequestBody(
+    private fun buildAuthApiRequest() = LoginAuth0APIRequestBody(
         audience = "${urlProvider.AUTH0_DOMAIN}/api/v2/",
         clientId = urlProvider.AUTH0_CLIENT_ID,
         clientSecret = urlProvider.AUTH0_CLIENT_SECRET,
@@ -155,8 +155,20 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
 @Serializable
 data class LoginAuth0UserRequestBody(
-    val username: String? = null,
-    val password: String? = null,
+    val username: String,
+    val password: String,
+    val audience: String,
+    @SerialName("client_id")
+    val clientId: String,
+    @SerialName("client_secret")
+    val clientSecret: String,
+    @SerialName("grant_type")
+    val grantType: String,
+    val scope: String? = null
+)
+
+@Serializable
+data class LoginAuth0APIRequestBody(
     val audience: String,
     @SerialName("client_id")
     val clientId: String,
@@ -198,7 +210,7 @@ data class SignupAuth0UserResponse(
     val nickname: String,
 ) {
     fun toCreateUserResponse() = CreateUserResponse(
-        userId = userId.split("|")[1],
+        userId = UUID.fromString(userId.split("|")[1]),
         nickname = nickname
     )
 }
