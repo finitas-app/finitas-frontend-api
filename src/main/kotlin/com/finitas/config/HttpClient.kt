@@ -8,11 +8,15 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
-
+import kotlinx.serialization.json.Json
 
 val httpClient: HttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
-        json()
+        json(
+            Json {
+                ignoreUnknownKeys = true
+            }
+        )
     }
     HttpResponseValidator {
         validateResponse { response ->

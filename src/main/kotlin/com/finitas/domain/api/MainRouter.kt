@@ -6,5 +6,6 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() = routing {
     route("/api") {
         receiptRouting()
+        authRouting()
     }
 }

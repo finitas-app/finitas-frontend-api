@@ -3,6 +3,8 @@ package com.finitas
 import com.finitas.config.configureSerialization
 import com.finitas.config.di.configureDependencyInjection
 import com.finitas.config.exceptions.configureExceptions
+import com.finitas.config.web.configureAuth
+import com.finitas.config.web.configureCORS
 import com.finitas.domain.api.configureRouting
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -17,6 +19,8 @@ fun main() {
 fun Application.module() {
     configureDependencyInjection()
     configureSerialization()
+    configureCORS()
+    configureAuth()
     configureRouting()
     configureExceptions()
 }

@@ -12,6 +12,7 @@ fun Application.configureDependencyInjection() {
         modules(
             urlsModule(isDevelopment),
             receiptModule,
+            authModule
         )
     }
 }

@@ -9,9 +9,9 @@ data class ErrorResponse(
 )
 
 enum class ErrorCode {
-    NOT_FOUND,
     GENERIC_ERROR,
-    NO_FILE_PROVIDED,
+    AUTH_ERROR,
+    CONFIGURATION_ERROR,
     FILE_NOT_PROVIDED,
     INVALID_FILE_PROVIDED,
 }
