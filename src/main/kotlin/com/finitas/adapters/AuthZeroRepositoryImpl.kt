@@ -143,7 +143,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
             HttpStatusCode.Forbidden -> UnauthorizedException(message = "Login failed")
             HttpStatusCode.Conflict -> ConflictException(
                 message = "User already exists",
-                errorCode = ErrorCode.AUTH_ERROR
+                errorCode = ErrorCode.SIGN_UP_USER_EXISTS
             )
 
             else -> InternalServerException(message = "Failed to create user", errorCode = ErrorCode.AUTH_ERROR)
@@ -152,10 +152,15 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
     private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
         val body = response.body<SignupAuth0UserBadRequestResponse>()
-        return if (body.isInvalidBody()) BadRequestException(
+        val statusCode =
+            if (body.message == "PasswordStrengthError: Password is too weak") ErrorCode.SIGN_UP_PASSWORD_WEAK
+            else if (body.message.startsWith("Payload validation error: 'Object didn't pass validation for format email:")) ErrorCode.SIGN_UP_LOGIN_INVALID
+            else ErrorCode.AUTH_ERROR
+
+        return if (statusCode != ErrorCode.AUTH_ERROR) BadRequestException(
             body.message,
-            ErrorCode.AUTH_ERROR
-        ) else InternalServerException(message = "Failed to create user", errorCode = ErrorCode.AUTH_ERROR)
+            statusCode
+        ) else InternalServerException(message = "Failed to create user", errorCode = statusCode)
     }
 }
 
@@ -224,7 +229,4 @@ data class SignupAuth0UserResponse(
 @Serializable
 data class SignupAuth0UserBadRequestResponse(
     val message: String,
-    val errorCode: String,
-) {
-    fun isInvalidBody() = errorCode == "invalid_body"
-}
+)
