@@ -2,10 +2,7 @@ package com.finitas.adapters
 
 import com.finitas.config.Logger
 import com.finitas.config.UUIDSerializer
-import com.finitas.config.exceptions.ConflictException
-import com.finitas.config.exceptions.ErrorCode
-import com.finitas.config.exceptions.InternalServerException
-import com.finitas.config.exceptions.UnauthorizedException
+import com.finitas.config.exceptions.*
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.model.AuthUserRequest
 import com.finitas.domain.model.AuthUserResponse
@@ -25,7 +22,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.util.UUID
+import java.util.*
 
 private val auth0lHttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {
@@ -142,6 +139,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
 
         throw when (response.status) {
+            HttpStatusCode.BadRequest -> handleBadRequestResponseWithBaseException(response)
             HttpStatusCode.Forbidden -> UnauthorizedException(message = "Login failed")
             HttpStatusCode.Conflict -> ConflictException(
                 message = "User already exists",
@@ -150,6 +148,14 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
             else -> InternalServerException(message = "Failed to create user", errorCode = ErrorCode.AUTH_ERROR)
         }
+    }
+
+    private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
+        val body = response.body<SignupAuth0UserBadRequestResponse>()
+        return if (body.isInvalidBody()) BadRequestException(
+            body.message,
+            ErrorCode.AUTH_ERROR
+        ) else InternalServerException(message = "Failed to create user", errorCode = ErrorCode.AUTH_ERROR)
     }
 }
 
@@ -213,4 +219,12 @@ data class SignupAuth0UserResponse(
         userId = UUID.fromString(userId.split("|")[1]),
         nickname = nickname
     )
+}
+
+@Serializable
+data class SignupAuth0UserBadRequestResponse(
+    val message: String,
+    val errorCode: String,
+) {
+    fun isInvalidBody() = errorCode == "invalid_body"
 }
