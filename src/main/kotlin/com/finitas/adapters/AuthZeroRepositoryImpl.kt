@@ -25,7 +25,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.util.UUID
+import java.util.*
 
 private val auth0lHttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {

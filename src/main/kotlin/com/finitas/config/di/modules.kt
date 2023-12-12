@@ -1,14 +1,11 @@
 package com.finitas.config.di
 
-import com.finitas.adapters.AuthZeroRepositoryImpl
-import com.finitas.adapters.ReceiptRepositoryImpl
+import com.finitas.adapters.*
 import com.finitas.config.urls.DevelopmentUrls
 import com.finitas.config.urls.ProductionUrls
 import com.finitas.config.urls.UrlProvider
-import com.finitas.domain.ports.AuthRepository
-import com.finitas.domain.ports.ReceiptRepository
-import com.finitas.domain.services.AuthService
-import com.finitas.domain.services.ReceiptService
+import com.finitas.domain.ports.*
+import com.finitas.domain.services.*
 import org.koin.dsl.module
 
 fun urlsModule(isDevelopment: Boolean) = module {
@@ -18,6 +15,20 @@ fun urlsModule(isDevelopment: Boolean) = module {
         else
             ProductionUrls
     }
+}
+
+val storeModule = module {
+    single<FinishedSpendingStoreRepository> { FinishedSpendingStoreRepositoryImpl(get()) }
+    single<ShoppingListStoreRepository> { ShoppingListStoreRepositoryImpl(get()) }
+    single<UserStoreRepository> { UserStoreRepositoryImpl(get()) }
+
+    single<UserRoleRepository> { UserRoleRepositoryImpl() }
+
+    single<FinishedSpendingStoreService> { FinishedSpendingStoreService(get()) }
+    single<ShoppingListStoreService> { ShoppingListStoreService(get()) }
+    single<UserStoreService> { UserStoreService(get()) }
+
+    single<UserRoleService> { UserRoleService(get()) }
 }
 
 val receiptModule = module {
