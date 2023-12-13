@@ -8,5 +8,5 @@ enum class Permission {
 }
 
 data class Role(
-    val permissions: List<Permission>
+    val permission: Permission
 )

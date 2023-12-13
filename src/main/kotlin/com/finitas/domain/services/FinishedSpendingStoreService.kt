@@ -16,6 +16,6 @@ class FinishedSpendingStoreService(private val repository: FinishedSpendingStore
     suspend fun updateFinishedSpending(dto: FinishedSpendingDto) =
         repository.updateFinishedSpending(dto)
 
-    suspend fun deleteFinishedSpending(dto: DeleteFinishedSpendingRequest) =
-        repository.deleteFinishedSpending(dto)
+    suspend fun deleteFinishedSpending(request: DeleteFinishedSpendingRequest) =
+        repository.deleteFinishedSpending(request)
 }

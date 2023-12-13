@@ -7,5 +7,5 @@ interface ShoppingListStoreRepository {
     suspend fun getAllShoppingLists(idUser: String): List<ShoppingListDto>
     suspend fun createShoppingList(dto: ShoppingListDto): UpdateResponse
     suspend fun updateShoppingList(dto: ShoppingListDto): UpdateResponse
-    suspend fun deleteShoppingList(dto: DeleteShoppingListRequest): UpdateResponse
+    suspend fun deleteShoppingList(request: DeleteShoppingListRequest): UpdateResponse
 }

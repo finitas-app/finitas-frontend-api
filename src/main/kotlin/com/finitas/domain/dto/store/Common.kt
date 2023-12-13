@@ -1,8 +1,6 @@
 package com.finitas.domain.dto.store
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import java.math.BigDecimal
 
 @Serializable
 data class ResponseMessage(val message: String)
@@ -27,8 +25,8 @@ data class SynchronizationResponse<T>(
 data class SpendingRecordDataDto(
     val idSpendingRecordData: String,
     val name: String,
-    @Contextual //todo: check if working
-    val price: BigDecimal,
+    // todo: serialize as big decimal
+    val price: Double,
     val category: CategoryDto,
 )
 

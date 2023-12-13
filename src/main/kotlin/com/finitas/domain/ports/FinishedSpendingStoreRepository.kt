@@ -7,5 +7,5 @@ interface FinishedSpendingStoreRepository {
     suspend fun getAllFinishedSpendings(idUser: String): List<FinishedSpendingDto>
     suspend fun createFinishedSpending(dto: FinishedSpendingDto): UpdateResponse
     suspend fun updateFinishedSpending(dto: FinishedSpendingDto): UpdateResponse
-    suspend fun deleteFinishedSpending(dto: DeleteFinishedSpendingRequest): UpdateResponse
+    suspend fun deleteFinishedSpending(request: DeleteFinishedSpendingRequest): UpdateResponse
 }

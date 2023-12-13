@@ -4,7 +4,6 @@ import com.finitas.domain.dto.store.DeleteShoppingListRequest
 import com.finitas.domain.dto.store.ShoppingListDto
 import com.finitas.domain.dto.store.SynchronizationRequest
 import com.finitas.domain.ports.ShoppingListStoreRepository
-import com.finitas.domain.ports.UserRoleRepository
 
 class ShoppingListStoreService(
     private val shoppingListStoreRepository: ShoppingListStoreRepository
@@ -21,6 +20,6 @@ class ShoppingListStoreService(
     suspend fun updateShoppingList(dto: ShoppingListDto) =
         shoppingListStoreRepository.updateShoppingList(dto)
 
-    suspend fun deleteShoppingList(dto: DeleteShoppingListRequest) =
-        shoppingListStoreRepository.deleteShoppingList(dto)
+    suspend fun deleteShoppingList(request: DeleteShoppingListRequest) =
+        shoppingListStoreRepository.deleteShoppingList(request)
 }

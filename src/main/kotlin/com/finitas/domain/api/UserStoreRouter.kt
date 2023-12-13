@@ -37,6 +37,12 @@ fun Route.userStoreRouting() {
                 )
                 call.respond(insertResult)
             }
+            get("/regular-spendings") {
+                val insertResult = userStoreService.getRegularSpendings(
+                    call.getPetitioner(),
+                )
+                call.respond(insertResult)
+            }
             get("/nicknames") {
                 userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ)
 

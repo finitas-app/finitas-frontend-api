@@ -6,4 +6,5 @@ interface UserStoreRepository {
     suspend fun addRegularSpendings(idUser: String, regularSpendings: List<RegularSpendingDto>): ResponseMessage
     suspend fun upsertUser(dto: UserDto): ResponseMessage
     suspend fun getNicknames(request: GetVisibleNamesRequest): List<IdUserWithVisibleName>
+    suspend fun getRegularSpendings(idUser: String): List<RegularSpendingDto>
 }

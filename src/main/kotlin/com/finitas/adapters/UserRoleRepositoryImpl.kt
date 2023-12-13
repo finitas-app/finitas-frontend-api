@@ -1,9 +1,11 @@
 package com.finitas.adapters
 
+import com.finitas.domain.model.Permission
+import com.finitas.domain.model.Role
 import com.finitas.domain.ports.UserRoleRepository
 
 class UserRoleRepositoryImpl : UserRoleRepository {
-    override fun authorizePetitionerInRelationToDataOwner(authorizingIdUser: String, dataOwnerId: String) {
-        TODO("Not yet implemented")
+    override fun getUserRoleInRoom(idUser: String, idRoom: String): Role {
+        return Role(Permission.DELETE)
     }
 }
