@@ -22,6 +22,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
 import java.util.*
 
 private val auth0lHttpClient = HttpClient(CIO) {
@@ -34,12 +35,17 @@ private val auth0lHttpClient = HttpClient(CIO) {
     }
 }
 
+private class Token(
+    val value: String,
+    val expiry: LocalDateTime,
+)
+
 private class ManagementApiToken(private val urlProvider: UrlProvider) {
     private val logger by Logger()
-    private var token: String? = null
+    private var token: Token? = null
     private val mutex = Mutex()
-    suspend fun get(): String {
-        if (token == null) {
+    suspend fun get(): Token {
+        if (token == null || token!!.expiry < LocalDateTime.now()) {
             mutex.withLock {
                 token = token ?: generate()
             }
@@ -54,14 +60,19 @@ private class ManagementApiToken(private val urlProvider: UrlProvider) {
         grantType = "client_credentials",
     )
 
-    private suspend fun generate(): String {
+    private suspend fun generate(): Token {
         return try {
             auth0lHttpClient
                 .post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                     contentType(ContentType.Application.Json)
                     buildAuthApiRequest().apply { setBody(this) }
                 }.body<Auth0TokenResponse>()
-                .accessToken
+                .let {
+                    Token(
+                        value = it.accessToken,
+                        expiry = LocalDateTime.now().plusSeconds(it.expiresIn.toLong())
+                    )
+                }
         } catch (cause: Exception) {
             logger.error("Failed to generate management API token.")
             throw InternalServerException(errorCode = ErrorCode.CONFIGURATION_ERROR, cause = cause)
