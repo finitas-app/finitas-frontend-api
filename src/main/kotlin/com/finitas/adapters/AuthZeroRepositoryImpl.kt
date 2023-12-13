@@ -73,6 +73,9 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
     private val logger by Logger()
     private val managementApiToken = ManagementApiToken(urlProvider)
+    private val auth0WeakPasswordMessage = "PasswordStrengthError: Password is too weak"
+    private val auth0EmailValidationFailedMessageBeginning =
+        "Payload validation error: 'Object didn't pass validation for format email:"
 
     private fun buildLoginAuth0UserRequest(request: AuthUserRequest) = LoginAuth0UserRequestBody(
         username = request.email,
@@ -153,8 +156,8 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
         val body = response.body<SignupAuth0UserBadRequestResponse>()
         val statusCode =
-            if (body.message == "PasswordStrengthError: Password is too weak") ErrorCode.SIGN_UP_PASSWORD_WEAK
-            else if (body.message.startsWith("Payload validation error: 'Object didn't pass validation for format email:")) ErrorCode.SIGN_UP_LOGIN_INVALID
+            if (body.message == auth0WeakPasswordMessage) ErrorCode.SIGN_UP_PASSWORD_WEAK
+            else if (body.message.startsWith(auth0EmailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
             else ErrorCode.AUTH_ERROR
 
         return if (statusCode != ErrorCode.AUTH_ERROR) BadRequestException(
