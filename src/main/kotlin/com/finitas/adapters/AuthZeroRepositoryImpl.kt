@@ -22,7 +22,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.time.LocalDateTime
 import java.util.*
 
 private val auth0lHttpClient = HttpClient(CIO) {
@@ -35,20 +34,22 @@ private val auth0lHttpClient = HttpClient(CIO) {
     }
 }
 
-private class Token(
-    val value: String,
-    val expiry: LocalDateTime,
-)
-
 private class ManagementApiToken(private val urlProvider: UrlProvider) {
     private val logger by Logger()
-    private var token: Token? = null
+    private var token: String? = null
     private val mutex = Mutex()
-    suspend fun get(): Token {
-        if (token == null || token!!.expiry < LocalDateTime.now()) {
+    suspend fun get(): String {
+        if (token == null) {
             mutex.withLock {
                 token = token ?: generate()
             }
+        }
+        return token!!
+    }
+
+    suspend fun getWithRefresh(): String {
+        mutex.withLock {
+            token = generate()
         }
         return token!!
     }
@@ -60,19 +61,14 @@ private class ManagementApiToken(private val urlProvider: UrlProvider) {
         grantType = "client_credentials",
     )
 
-    private suspend fun generate(): Token {
+    private suspend fun generate(): String {
         return try {
             auth0lHttpClient
                 .post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
                     contentType(ContentType.Application.Json)
                     buildAuthApiRequest().apply { setBody(this) }
                 }.body<Auth0TokenResponse>()
-                .let {
-                    Token(
-                        value = it.accessToken,
-                        expiry = LocalDateTime.now().plusSeconds(it.expiresIn.toLong())
-                    )
-                }
+                .accessToken
         } catch (cause: Exception) {
             logger.error("Failed to generate management API token.")
             throw InternalServerException(errorCode = ErrorCode.CONFIGURATION_ERROR, cause = cause)
@@ -87,6 +83,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     private val auth0WeakPasswordMessage = "PasswordStrengthError: Password is too weak"
     private val auth0EmailValidationFailedMessageBeginning =
         "Payload validation error: 'Object didn't pass validation for format email:"
+    private val auth0ApiTokenExpiredMessage = "Expired token received for JSON Web Token validation"
 
     private fun buildLoginAuth0UserRequest(request: AuthUserRequest) = LoginAuth0UserRequestBody(
         username = request.email,
@@ -130,9 +127,8 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         }
     }
 
-    override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
+    private suspend fun sendCreateUserRequest(request: CreateUserRequest, apiToken: String): HttpResponse {
         val response: HttpResponse
-        val apiToken = managementApiToken.get()
 
         try {
             response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
@@ -146,11 +142,28 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
             throw InternalServerException("Failed to create user", exception, ErrorCode.AUTH_ERROR)
         }
 
+        return response
+    }
+
+    private suspend fun isResponseFailedDueToApiTokenExpired(response: HttpResponse) =
+        response.status == HttpStatusCode.Unauthorized
+                && response.body<SignupAuth0UserErrorResponse>().message == auth0ApiTokenExpiredMessage
+
+    override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
+        var response = sendCreateUserRequest(request, managementApiToken.get())
+
+        if (isResponseFailedDueToApiTokenExpired(response)) {
+            logger.info("Refreshing API auth token.")
+            response = sendCreateUserRequest(request, managementApiToken.getWithRefresh())
+        }
+
         if (response.status == HttpStatusCode.Created) {
             return response.body<SignupAuth0UserResponse>().toCreateUserResponse()
         }
 
-        logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
+        val errorResponseBody = response.body<SignupAuth0UserErrorResponse>()
+
+        logger.error("Error response: ${errorResponseBody.message}, HTTP code: ${response.status}")
 
         throw when (response.status) {
             HttpStatusCode.BadRequest -> handleBadRequestResponseWithBaseException(response)
@@ -239,6 +252,11 @@ data class SignupAuth0UserResponse(
         nickname = nickname
     )
 }
+
+@Serializable
+data class SignupAuth0UserErrorResponse(
+    val message: String,
+)
 
 @Serializable
 data class SignupAuth0UserBadRequestResponse(
