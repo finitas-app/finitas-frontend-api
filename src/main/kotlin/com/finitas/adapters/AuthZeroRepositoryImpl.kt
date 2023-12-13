@@ -53,6 +53,13 @@ private class ManagementApiToken(private val urlProvider: UrlProvider) {
         return token!!
     }
 
+    suspend fun getWithRefresh(): String {
+        mutex.withLock {
+            token = generate()
+        }
+        return token!!
+    }
+
     private fun buildAuthApiRequest() = LoginAuth0APIRequestBody(
         audience = "${urlProvider.AUTH0_DOMAIN}/api/v2/",
         clientId = urlProvider.AUTH0_CLIENT_ID,
@@ -87,6 +94,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     private val auth0WeakPasswordMessage = "PasswordStrengthError: Password is too weak"
     private val auth0EmailValidationFailedMessageBeginning =
         "Payload validation error: 'Object didn't pass validation for format email:"
+    private val auth0ApiTokenExpiredMessage = "Expired token received for JSON Web Token validation"
 
     private fun buildLoginAuth0UserRequest(request: AuthUserRequest) = LoginAuth0UserRequestBody(
         username = request.email,
@@ -130,9 +138,8 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         }
     }
 
-    override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
+    private suspend fun sendCreateUserRequest(request: CreateUserRequest, apiToken: String): HttpResponse {
         val response: HttpResponse
-        val apiToken = managementApiToken.get()
 
         try {
             response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
@@ -146,11 +153,28 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
             throw InternalServerException("Failed to create user", exception, ErrorCode.AUTH_ERROR)
         }
 
+        return response
+    }
+
+    private suspend fun isResponseFailedDueToApiTokenExpired(response: HttpResponse) =
+        response.status == HttpStatusCode.Unauthorized
+                && response.body<SignupAuth0UserErrorResponse>().message == auth0ApiTokenExpiredMessage
+
+    override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
+        var response = sendCreateUserRequest(request, managementApiToken.get())
+
+        if (isResponseFailedDueToApiTokenExpired(response)) {
+            logger.info("Refreshing API auth token.")
+            response = sendCreateUserRequest(request, managementApiToken.getWithRefresh())
+        }
+
         if (response.status == HttpStatusCode.Created) {
             return response.body<SignupAuth0UserResponse>().toCreateUserResponse()
         }
 
-        logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
+        val errorResponseBody = response.body<SignupAuth0UserErrorResponse>()
+
+        logger.error("Error response: ${errorResponseBody.message}, HTTP code: ${response.status}")
 
         throw when (response.status) {
             HttpStatusCode.BadRequest -> handleBadRequestResponseWithBaseException(response)
@@ -239,6 +263,11 @@ data class SignupAuth0UserResponse(
         nickname = nickname
     )
 }
+
+@Serializable
+data class SignupAuth0UserErrorResponse(
+    val message: String,
+)
 
 @Serializable
 data class SignupAuth0UserBadRequestResponse(
