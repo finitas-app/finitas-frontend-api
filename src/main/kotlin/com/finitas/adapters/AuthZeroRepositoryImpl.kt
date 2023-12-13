@@ -2,10 +2,7 @@ package com.finitas.adapters
 
 import com.finitas.config.Logger
 import com.finitas.config.UUIDSerializer
-import com.finitas.config.exceptions.ConflictException
-import com.finitas.config.exceptions.ErrorCode
-import com.finitas.config.exceptions.InternalServerException
-import com.finitas.config.exceptions.UnauthorizedException
+import com.finitas.config.exceptions.*
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.model.AuthUserRequest
 import com.finitas.domain.model.AuthUserResponse
@@ -76,6 +73,9 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
     private val logger by Logger()
     private val managementApiToken = ManagementApiToken(urlProvider)
+    private val auth0WeakPasswordMessage = "PasswordStrengthError: Password is too weak"
+    private val auth0EmailValidationFailedMessageBeginning =
+        "Payload validation error: 'Object didn't pass validation for format email:"
 
     private fun buildLoginAuth0UserRequest(request: AuthUserRequest) = LoginAuth0UserRequestBody(
         username = request.email,
@@ -142,14 +142,28 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
 
         throw when (response.status) {
+            HttpStatusCode.BadRequest -> handleBadRequestResponseWithBaseException(response)
             HttpStatusCode.Forbidden -> UnauthorizedException(message = "Login failed")
             HttpStatusCode.Conflict -> ConflictException(
                 message = "User already exists",
-                errorCode = ErrorCode.AUTH_ERROR
+                errorCode = ErrorCode.SIGN_UP_USER_EXISTS
             )
 
             else -> InternalServerException(message = "Failed to create user", errorCode = ErrorCode.AUTH_ERROR)
         }
+    }
+
+    private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
+        val body = response.body<SignupAuth0UserBadRequestResponse>()
+        val statusCode =
+            if (body.message == auth0WeakPasswordMessage) ErrorCode.SIGN_UP_PASSWORD_WEAK
+            else if (body.message.startsWith(auth0EmailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
+            else ErrorCode.AUTH_ERROR
+
+        return if (statusCode != ErrorCode.AUTH_ERROR) BadRequestException(
+            body.message,
+            statusCode
+        ) else InternalServerException(message = "Failed to create user", errorCode = statusCode)
     }
 }
 
@@ -214,3 +228,8 @@ data class SignupAuth0UserResponse(
         nickname = nickname
     )
 }
+
+@Serializable
+data class SignupAuth0UserBadRequestResponse(
+    val message: String,
+)
