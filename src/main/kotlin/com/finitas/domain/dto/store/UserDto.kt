@@ -3,8 +3,13 @@ package com.finitas.domain.dto.store
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class UserIdValue(
+    val userId: String,
+)
+
+@Serializable
 data class GetVisibleNamesRequest(
-    val userIds: List<String>
+    val userIds: List<UserIdValue>
 )
 
 @Serializable
