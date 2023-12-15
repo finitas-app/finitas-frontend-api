@@ -5,7 +5,7 @@ import io.ktor.http.content.*
 import kotlinx.serialization.Serializable
 
 @JvmInline
-value class ReceiptBinaryData(val raw: MultiPartData) {
+value class ReceiptBinaryData(private val raw: MultiPartData) {
     suspend fun toMultiPartFormDataContent() = MultiPartFormDataContent(raw.readAllParts())
 }
 

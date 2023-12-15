@@ -15,6 +15,12 @@ class NotFoundException(
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.NotFound)
 
+class ForbiddenException(
+    message: String = "Forbidden",
+    errorCode: ErrorCode,
+    cause: Exception? = null,
+) : BaseException(message, errorCode, cause, HttpStatusCode.Forbidden)
+
 class BadRequestException(
     message: String = "Bad request",
     errorCode: ErrorCode,
