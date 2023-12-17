@@ -1,6 +1,8 @@
 package com.finitas.domain.dto.store
 
+import com.finitas.config.UUIDSerializer
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class ResponseMessage(val message: String)
@@ -23,7 +25,8 @@ data class SynchronizationResponse<T>(
 
 @Serializable
 data class SpendingRecordDataDto(
-    val idSpendingRecordData: String,
+    @Serializable(UUIDSerializer::class)
+    val idSpendingRecordData: UUID,
     val name: String,
     // todo: serialize as big decimal
     val price: Double,
@@ -32,7 +35,9 @@ data class SpendingRecordDataDto(
 
 @Serializable
 data class CategoryDto(
-    val idCategory: String,
+    @Serializable(UUIDSerializer::class)
+    val idCategory: UUID,
     val name: String,
-    val idParent: String?,
+    @Serializable(UUIDSerializer::class)
+    val idParent: UUID?,
 )

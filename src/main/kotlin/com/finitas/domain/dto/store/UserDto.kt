@@ -1,10 +1,13 @@
 package com.finitas.domain.dto.store
 
+import com.finitas.config.UUIDSerializer
 import kotlinx.serialization.Serializable
+import java.util.*
 
 @Serializable
 data class UserIdValue(
-    val userId: String,
+    @Serializable(UUIDSerializer::class)
+    val userId: UUID,
 )
 
 @Serializable
@@ -14,15 +17,28 @@ data class GetVisibleNamesRequest(
 
 @Serializable
 data class IdUserWithVisibleName(
-    val idUser: String,
+    @Serializable(UUIDSerializer::class)
+    val idUser: UUID,
     val visibleName: String,
 )
 
 @Serializable
 data class UserDto(
-    val idUser: String,
+    @Serializable(UUIDSerializer::class)
+    val idUser: UUID,
     val visibleName: String,
     val regularSpendings: List<RegularSpendingDto>
+)
+
+@Serializable
+data class VisibleName(
+    val value: String
+)
+
+@Serializable
+data class IdRegularSpending(
+    @Serializable(UUIDSerializer::class)
+    val id: UUID
 )
 
 @Serializable
@@ -33,7 +49,8 @@ data class UserDataDto(
 
 @Serializable
 data class RegularSpendingDto(
-    val idRegularSpending: String,
+    @Serializable(UUIDSerializer::class)
+    val idRegularSpending: UUID,
     val cron: String,
     val spendingSummary: SpendingSummaryDto,
 )

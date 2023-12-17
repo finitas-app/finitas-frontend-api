@@ -2,6 +2,7 @@ package com.finitas.adapters
 
 import com.finitas.config.Logger
 import com.finitas.config.UUIDSerializer
+import com.finitas.config.contentTypeJson
 import com.finitas.config.exceptions.*
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.model.AuthUserRequest
@@ -80,10 +81,11 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
     private val logger by Logger()
     private val managementApiToken = ManagementApiToken(urlProvider)
-    private val auth0WeakPasswordMessage = "PasswordStrengthError: Password is too weak"
-    private val auth0EmailValidationFailedMessageBeginning =
+    private val weakPasswordMessage = "PasswordStrengthError: Password is too weak"
+    private val emailValidationFailedMessageBeginning =
         "Payload validation error: 'Object didn't pass validation for format email:"
-    private val auth0ApiTokenExpiredMessage = "Expired token received for JSON Web Token validation"
+    private val apiTokenExpiredMessage = "Expired token received for JSON Web Token validation"
+    private val userIdPrefix = "auth0|"
 
     private fun buildLoginAuth0UserRequest(request: AuthUserRequest) = LoginAuth0UserRequestBody(
         username = request.email,
@@ -108,7 +110,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
 
         try {
             response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/oauth/token") {
-                contentType(ContentType.Application.Json)
+                contentTypeJson()
                 buildLoginAuth0UserRequest(request).apply { setBody(this) }
             }
         } catch (exception: Exception) {
@@ -128,11 +130,9 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     }
 
     private suspend fun sendCreateUserRequest(request: CreateUserRequest, apiToken: String): HttpResponse {
-        val response: HttpResponse
-
-        try {
-            response = auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
-                contentType(ContentType.Application.Json)
+        return try {
+            auth0lHttpClient.post("${urlProvider.AUTH0_DOMAIN}/api/v2/users") {
+                contentTypeJson()
                 headers {
                     append("Authorization", "Bearer $apiToken")
                 }
@@ -141,13 +141,11 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         } catch (exception: Exception) {
             throw InternalServerException("Failed to create user", exception, ErrorCode.AUTH_ERROR)
         }
-
-        return response
     }
 
     private suspend fun isResponseFailedDueToApiTokenExpired(response: HttpResponse) =
         response.status == HttpStatusCode.Unauthorized
-                && response.body<SignupAuth0UserErrorResponse>().message == auth0ApiTokenExpiredMessage
+                && response.body<SignupAuth0UserErrorResponse>().message == apiTokenExpiredMessage
 
     override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
         var response = sendCreateUserRequest(request, managementApiToken.get())
@@ -177,11 +175,26 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         }
     }
 
+    override suspend fun deleteUser(idUser: UUID) {
+        val fullIdUser = userIdPrefix + idUser.toString()
+        val apiToken = managementApiToken.get()
+        val response = auth0lHttpClient.delete("${urlProvider.AUTH0_DOMAIN}/api/v2/users/$fullIdUser") {
+            contentTypeJson()
+            headers {
+                append("Authorization", "Bearer $apiToken")
+            }
+        }
+
+        if (response.status != HttpStatusCode.NoContent) {
+            throw InternalServerException(errorCode = ErrorCode.DELETE_USER_ERROR)
+        }
+    }
+
     private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
         val body = response.body<SignupAuth0UserBadRequestResponse>()
         val statusCode =
-            if (body.message == auth0WeakPasswordMessage) ErrorCode.SIGN_UP_PASSWORD_WEAK
-            else if (body.message.startsWith(auth0EmailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
+            if (body.message == weakPasswordMessage) ErrorCode.SIGN_UP_PASSWORD_WEAK
+            else if (body.message.startsWith(emailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
             else ErrorCode.AUTH_ERROR
 
         return if (statusCode != ErrorCode.AUTH_ERROR) BadRequestException(
@@ -248,7 +261,11 @@ data class SignupAuth0UserResponse(
     val nickname: String,
 ) {
     fun toCreateUserResponse() = CreateUserResponse(
-        userId = UUID.fromString(userId.split("|")[1]),
+        userId = try {
+            UUID.fromString(userId.split("|")[1])
+        } catch (error: Exception) {
+            throw InternalServerException(errorCode = ErrorCode.CREATE_USER_ERROR, cause = error)
+        },
         nickname = nickname
     )
 }

@@ -38,5 +38,6 @@ val receiptModule = module {
 
 val authModule = module {
     single<AuthRepository> { AuthZeroRepositoryImpl(get()) }
-    single<AuthService> { AuthService(get()) }
+    single<UserStoreRepository> { UserStoreRepositoryImpl(get()) }
+    single<AuthService> { AuthService(get(), get()) }
 }

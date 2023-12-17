@@ -1,14 +1,12 @@
 package com.finitas.domain.api
 
-import com.finitas.domain.dto.store.GetVisibleNamesRequest
-import com.finitas.domain.dto.store.RegularSpendingDto
-import com.finitas.domain.dto.store.UserDataDto
-import com.finitas.domain.dto.store.UserDto
+import com.finitas.domain.dto.store.*
 import com.finitas.domain.model.Permission
 import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.services.UserStoreService
 import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getPetitioner
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -22,32 +20,44 @@ fun Route.userStoreRouting() {
 
     route("/users") {
         authenticate {
-            put {
-                val request = call.receive<UserDataDto>()
-                call.respond(userStoreService.upsertUser(UserDto(
-                    idUser = call.getPetitioner(),
-                    visibleName = request.visibleName,
-                    regularSpendings = request.regularSpendings
-                )))
-            }
-            post("/regular-spendings") {
-                val insertResult = userStoreService.addRegularSpending(
-                    call.getPetitioner(),
-                    call.receive<List<RegularSpendingDto>>()
-                )
-                call.respond(insertResult)
-            }
-            get("/regular-spendings") {
-                val insertResult = userStoreService.getRegularSpendings(
-                    call.getPetitioner(),
-                )
-                call.respond(insertResult)
-            }
-            get("/nicknames") {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ)
+            route("/nicknames") {
+                get {
+                    userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ)
 
-                val request = call.receive<GetVisibleNamesRequest>()
-                call.respond(userStoreService.getNicknames(request))
+                    val request = call.receive<GetVisibleNamesRequest>()
+                    call.respond(userStoreService.getNicknames(request))
+                }
+                patch {
+                    userStoreService.updateNickname(
+                        IdUserWithVisibleName(
+                            idUser = call.getPetitioner(),
+                            visibleName = call.receive<VisibleName>().value
+                        )
+                    )
+                    call.respond(HttpStatusCode.NoContent)
+                }
+            }
+            route("/regular-spendings") {
+                post {
+                    val insertResult = userStoreService.addRegularSpending(
+                        call.getPetitioner(),
+                        call.receive<List<RegularSpendingDto>>()
+                    )
+                    call.respond(insertResult)
+                }
+                get {
+                    val insertResult = userStoreService.getRegularSpendings(
+                        call.getPetitioner(),
+                    )
+                    call.respond(insertResult)
+                }
+                delete {
+                    userStoreService.deleteRegularSpending(
+                        idUser = call.getPetitioner(),
+                        idRegularSpending = call.receive<IdRegularSpending>().id
+                    )
+                    call.respond(HttpStatusCode.NoContent)
+                }
             }
         }
     }

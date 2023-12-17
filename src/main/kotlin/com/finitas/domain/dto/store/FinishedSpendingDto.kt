@@ -1,26 +1,33 @@
 package com.finitas.domain.dto.store
 
+import com.finitas.config.UUIDSerializer
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class DeleteFinishedSpendingRequest(
-    val idSpendingSummary: String,
-    val idUser: String,
+    @Serializable(UUIDSerializer::class)
+    val idSpendingSummary: UUID,
+    @Serializable(UUIDSerializer::class)
+    val idUser: UUID,
 )
 
 @Serializable
 class FinishedSpendingDto(
     val spendingSummary: SpendingSummaryDto,
-    val idReceipt: String?,
+    @Serializable(UUIDSerializer::class)
+    val idReceipt: UUID?,
     val purchaseDate: Int,
     val version: Int,
-    val idUser: String,
+    @Serializable(UUIDSerializer::class)
+    val idUser: UUID,
     val isDeleted: Boolean,
 )
 
 @Serializable
 data class SpendingSummaryDto(
-    val idSpendingSummary: String,
+    @Serializable(UUIDSerializer::class)
+    val idSpendingSummary: UUID,
     val createdAt: Int,
     val name: String,
     val spendingRecords: List<SpendingRecordDto>,
@@ -28,6 +35,7 @@ data class SpendingSummaryDto(
 
 @Serializable
 data class SpendingRecordDto(
-    val idSpendingRecord: String,
+    @Serializable(UUIDSerializer::class)
+    val idSpendingRecord: UUID,
     val spendingRecordData: SpendingRecordDataDto,
 )
