@@ -4,14 +4,28 @@ import com.finitas.config.exceptions.BadRequestException
 import com.finitas.config.exceptions.ErrorCode
 import io.ktor.server.application.*
 import io.ktor.util.*
+import java.util.*
 
-fun ApplicationCall.getPetitioner() = attributes.get<String>(AttributeKey("userId"))
+fun ApplicationCall.getPetitioner() = attributes.get<UUID>(AttributeKey("userId"))
 
 fun ApplicationCall.getIdRoom() =
-    parameters["idRoom"] ?: throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
+    try {
+        parameters["idRoom"]?.let { UUID.fromString(it) }
+    } catch (_: Exception) {
+        throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
+    }
+        ?: throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
 
 fun ApplicationCall.getIdUser() =
-    parameters["idUser"] ?: throw BadRequestException(
-        "idUser not provided",
-        ErrorCode.ID_USER_NOT_PROVIDED
-    )
+    try {
+        parameters["idUser"]?.let { UUID.fromString(it) }
+    } catch (_: Exception) {
+        throw BadRequestException(
+            "idUser not provided",
+            ErrorCode.ID_USER_NOT_PROVIDED
+        )
+    }
+        ?: throw BadRequestException(
+            "idUser not provided",
+            ErrorCode.ID_USER_NOT_PROVIDED
+        )

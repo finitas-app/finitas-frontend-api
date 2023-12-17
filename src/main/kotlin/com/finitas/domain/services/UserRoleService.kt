@@ -4,9 +4,10 @@ import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.exceptions.ForbiddenException
 import com.finitas.domain.model.Permission
 import com.finitas.domain.ports.UserRoleRepository
+import java.util.*
 
 class UserRoleService(private val repository: UserRoleRepository) {
-    fun authUserByRoleInRoom(idUser: String, idRoom: String, requiredPermission: Permission) {
+    fun authUserByRoleInRoom(idUser: UUID, idRoom: UUID, requiredPermission: Permission) {
         val userRole = repository.getUserRoleInRoom(idUser, idRoom)
         if (userRole.permission.ordinal < requiredPermission.ordinal) throw ForbiddenException(
             "User not allowed to perform this action",

@@ -7,8 +7,13 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+
+fun HttpRequestBuilder.contentTypeJson() = contentType(ContentType.Application.Json)
 
 val httpClient: HttpClient = HttpClient(CIO) {
     install(ContentNegotiation) {

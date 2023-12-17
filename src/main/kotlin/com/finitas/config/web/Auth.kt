@@ -1,8 +1,10 @@
 package com.finitas.config.web
 
 import com.auth0.jwk.JwkProviderBuilder
+import com.finitas.config.exceptions.BadRequestException
 import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.exceptions.ErrorResponse
+import com.finitas.config.exceptions.UnauthorizedException
 import com.finitas.config.urls.UrlProvider
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -11,6 +13,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.util.*
 import org.koin.ktor.ext.inject
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun Application.configureAuth() {
@@ -26,7 +29,12 @@ fun Application.configureAuth() {
             verifier(jwkProvider, "${urlProvider.AUTH0_DOMAIN}/")
             validate { credential ->
                 val containsAudience = credential.payload.audience.contains(urlProvider.AUTH0_FINITAS_API_AUDIENCE)
-                this.attributes.put(AttributeKey("userId"), credential.payload.subject.split("|")[1])
+                val userId = try {
+                    UUID.fromString(credential.payload.subject.split("|")[1])
+                } catch (_: Exception) {
+                    throw UnauthorizedException("User id is invalid", ErrorCode.ID_USER_INVALID)
+                }
+                this.attributes.put(AttributeKey("userId"), userId)
                 if (containsAudience) JWTPrincipal(credential.payload)
                 else null
             }
