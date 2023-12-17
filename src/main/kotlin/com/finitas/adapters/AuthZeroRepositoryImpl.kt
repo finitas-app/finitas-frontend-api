@@ -241,17 +241,40 @@ data class SignupAuth0UserRequestBody(
 )
 
 @Serializable
+private data class TokenPayload(
+    val sub: String,
+)
+
+@Serializable
 data class Auth0TokenResponse(
     @SerialName("access_token")
     val accessToken: String,
     @SerialName("expires_in")
     val expiresIn: Int
 ) {
+    companion object {
+        private val JSONInstance = Json {
+            ignoreUnknownKeys = true
+        }
+    }
+
     fun toAuthUserResponse() =
         AuthUserResponse(
             accessToken = accessToken,
-            expires = expiresIn
+            expires = expiresIn,
+            idUser = getIdUserFromToken(accessToken)
         )
+
+    private fun getIdUserFromToken(token: String) =
+        try {
+            val partitions = token.split(".")
+            val payload = partitions[1]
+            val payloadDecoded = String(Base64.getDecoder().decode(payload))
+            val sub = JSONInstance.decodeFromString<TokenPayload>(payloadDecoded).sub
+            sub.split("|")[1]
+        } catch (exception: Exception) {
+            throw InternalServerException("Failed to get idUser", errorCode = ErrorCode.AUTH_ERROR)
+        }
 }
 
 @Serializable
