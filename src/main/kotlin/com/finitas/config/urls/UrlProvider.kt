@@ -8,4 +8,5 @@ interface UrlProvider {
     val AUTH0_DOMAIN: String
     val RECEIPT_PARSING_TIMEOUT: Long
     val STORE_HOST_URL: String
+    val ROOM_MANAGER_HOST_URL: String
 }

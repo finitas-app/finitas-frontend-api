@@ -8,4 +8,5 @@ object DevelopmentUrls : UrlProvider {
     override val RECEIPT_SERVICE_HOST_URL = "http://localhost:8081/api/parse"
     override val RECEIPT_PARSING_TIMEOUT = 8000L
     override val STORE_HOST_URL = "http://localhost:8081/api/store"
+    override val ROOM_MANAGER_HOST_URL = "http://localhost:8083/api"
 }

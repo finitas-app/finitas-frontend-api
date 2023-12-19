@@ -8,4 +8,5 @@ object ProductionUrls : UrlProvider {
     override val AUTH0_DOMAIN = ""
     override val RECEIPT_PARSING_TIMEOUT = 1000L
     override val STORE_HOST_URL = "http://localhost:8081/api/store"
+    override val ROOM_MANAGER_HOST_URL = ""
 }

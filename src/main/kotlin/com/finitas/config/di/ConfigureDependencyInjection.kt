@@ -11,9 +11,11 @@ fun Application.configureDependencyInjection() {
         slf4jLogger()
         modules(
             urlsModule(isDevelopment),
+            notificationModule,
             receiptModule,
             authModule,
-            storeModule
+            storeModule,
+            roomModule,
         )
     }
 }

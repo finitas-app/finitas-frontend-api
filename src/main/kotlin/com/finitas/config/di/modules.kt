@@ -41,3 +41,14 @@ val authModule = module {
     single<UserStoreRepository> { UserStoreRepositoryImpl(get()) }
     single<AuthService> { AuthService(get(), get()) }
 }
+
+val roomModule = module {
+    single<RoomMessageRepository> { RoomMessageRepositoryImpl(get()) }
+    single<RoomRepository> { RoomRepositoryImpl(get()) }
+    single { RoomMessageService(get(), get()) }
+    single { RoomService(get()) }
+}
+
+val notificationModule = module {
+    single<UserNotifierPort> { UserNotifierAdapter() }
+}

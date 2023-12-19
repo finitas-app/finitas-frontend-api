@@ -1,8 +1,7 @@
 package com.finitas.domain.model
 
-import com.finitas.config.UUIDSerializer
+import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class AuthUserRequest(val email: String, val password: String)
@@ -14,4 +13,4 @@ data class AuthUserResponse(val accessToken: String, val expires: Int, val idUse
 data class CreateUserRequest(val email: String, val password: String)
 
 @Serializable
-data class CreateUserResponse(@Serializable(with = UUIDSerializer::class) val userId: UUID, val nickname: String)
+data class CreateUserResponse(val userId: SerializableUUID, val nickname: String)
