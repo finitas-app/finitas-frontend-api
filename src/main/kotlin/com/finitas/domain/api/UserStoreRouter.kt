@@ -21,7 +21,7 @@ fun Route.userStoreRouting() {
     route("/users") {
         authenticate {
             route("/nicknames") {
-                get {
+                post("/sync") {
                     userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ)
 
                     val request = call.receive<GetVisibleNamesRequest>()
