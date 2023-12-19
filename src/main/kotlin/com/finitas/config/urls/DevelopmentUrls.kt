@@ -7,6 +7,6 @@ object DevelopmentUrls : UrlProvider {
     override val AUTH0_DOMAIN = "https://dev-ktqlmp7ts80r786t.us.auth0.com"
     override val RECEIPT_SERVICE_HOST_URL = "http://localhost:8081/api/parse"
     override val RECEIPT_PARSING_TIMEOUT = 8000L
-    override val STORE_HOST_URL = "http://localhost:8081/api/store"
+    override val STORE_HOST_URL = "http://localhost:8082/api/store"
     override val ROOM_MANAGER_HOST_URL = "http://localhost:8083/api"
 }
