@@ -15,6 +15,10 @@ plugins {
 group = "com.finitas"
 version = "0.0.1"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
 application {
     mainClass.set("com.finitas.ApplicationKt")
 
@@ -46,7 +50,6 @@ dependencies {
     implementation("io.ktor:ktor-client-json:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-server-websockets-jvm:2.3.6")
     testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4J_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
