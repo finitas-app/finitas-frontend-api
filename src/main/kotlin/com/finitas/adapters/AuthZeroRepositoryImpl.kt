@@ -1,9 +1,9 @@
 package com.finitas.adapters
 
 import com.finitas.config.Logger
-import com.finitas.config.UUIDSerializer
 import com.finitas.config.contentTypeJson
 import com.finitas.config.exceptions.*
+import com.finitas.config.serialization.SerializableUUID
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.model.AuthUserRequest
 import com.finitas.domain.model.AuthUserResponse
@@ -235,9 +235,8 @@ data class SignupAuth0UserRequestBody(
     val email: String,
     val password: String,
     val connection: String,
-    @Serializable(with = UUIDSerializer::class)
     @SerialName("user_id")
-    val userId: UUID,
+    val userId: SerializableUUID,
 )
 
 @Serializable

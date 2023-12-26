@@ -1,32 +1,26 @@
 package com.finitas.domain.dto.store
 
-import com.finitas.config.UUIDSerializer
+import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class DeleteShoppingListRequest(
-    @Serializable(UUIDSerializer::class)
-    val idShoppingList: UUID,
-    @Serializable(UUIDSerializer::class)
-    val idUser: UUID,
+    val idShoppingList: SerializableUUID,
+    val idUser: SerializableUUID,
 )
 
 @Serializable
 class ShoppingListDto(
-    @Serializable(UUIDSerializer::class)
-    val idShoppingList: UUID,
+    val idShoppingList: SerializableUUID,
     val shoppingItems: List<ShoppingItemDto>,
     val version: Int,
-    @Serializable(UUIDSerializer::class)
-    val idUser: UUID,
+    val idUser: SerializableUUID,
     val isDeleted: Boolean,
 )
 
 @Serializable
 data class ShoppingItemDto(
-    @Serializable(UUIDSerializer::class)
-    val idShoppingItem: UUID,
+    val idShoppingItem: SerializableUUID,
     val isDone: Int,
     val spendingRecordData: SpendingRecordDataDto,
 )

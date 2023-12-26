@@ -1,19 +1,18 @@
 package com.finitas.config.di
 
 import com.finitas.adapters.*
-import com.finitas.config.urls.DevelopmentUrls
-import com.finitas.config.urls.ProductionUrls
-import com.finitas.config.urls.UrlProvider
+import com.finitas.config.urls.*
 import com.finitas.domain.ports.*
 import com.finitas.domain.services.*
 import org.koin.dsl.module
 
-fun urlsModule(isDevelopment: Boolean) = module {
+fun urlsModule(profile: Profile) = module {
     single<UrlProvider> {
-        if (isDevelopment)
-            DevelopmentUrls
-        else
-            ProductionUrls
+        when(profile) {
+            Profile.prod -> ProductionUrls
+            Profile.dev -> DevelopmentUrls
+            Profile.docker -> DockerUrls
+        }
     }
 }
 
@@ -40,4 +39,15 @@ val authModule = module {
     single<AuthRepository> { AuthZeroRepositoryImpl(get()) }
     single<UserStoreRepository> { UserStoreRepositoryImpl(get()) }
     single<AuthService> { AuthService(get(), get()) }
+}
+
+val roomModule = module {
+    single<RoomMessageRepository> { RoomMessageRepositoryImpl(get()) }
+    single<RoomRepository> { RoomRepositoryImpl(get()) }
+    single { RoomMessageService(get(), get()) }
+    single { RoomService(get()) }
+}
+
+val notificationModule = module {
+    single<UserNotifierPort> { UserNotifierAdapter() }
 }

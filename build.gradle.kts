@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -12,6 +14,10 @@ plugins {
 
 group = "com.finitas"
 version = "0.0.1"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
 
 application {
     mainClass.set("com.finitas.ApplicationKt")
@@ -34,6 +40,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
     implementation("org.apache.logging.log4j:log4j-api:$log4J_version")
@@ -46,4 +53,11 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4J_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "17"
+    }
 }
