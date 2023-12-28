@@ -9,5 +9,5 @@ interface UserStoreRepository {
     suspend fun getNicknames(request: GetVisibleNamesRequest): List<IdUserWithVisibleName>
     suspend fun getRegularSpendings(idUser: UUID): List<RegularSpendingDto>
     suspend fun updateNickname(request: IdUserWithVisibleName)
-    suspend fun deleteRegularSpending(idUser: UUID, idRegularSpending: UUID)
+    suspend fun deleteRegularSpending(idUser: UUID, idSpendingSummary: UUID)
 }

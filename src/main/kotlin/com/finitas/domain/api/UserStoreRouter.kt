@@ -1,10 +1,8 @@
 package com.finitas.domain.api
 
 import com.finitas.domain.dto.store.*
-import com.finitas.domain.model.Permission
 import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.services.UserStoreService
-import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -52,7 +50,7 @@ fun Route.userStoreRouting() {
                 delete {
                     userStoreService.deleteRegularSpending(
                         idUser = call.getPetitioner(),
-                        idRegularSpending = call.receive<IdRegularSpending>().id
+                        idSpendingSummary = call.receive<IdSpendingSummary>().idSpendingSummary
                     )
                     call.respond(HttpStatusCode.NoContent)
                 }

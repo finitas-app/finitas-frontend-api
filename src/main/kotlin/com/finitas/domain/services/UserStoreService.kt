@@ -13,6 +13,6 @@ class UserStoreService(private val repository: UserStoreRepository) {
     suspend fun getNicknames(request: GetVisibleNamesRequest) = repository.getNicknames(request)
     suspend fun getRegularSpendings(idUser: UUID) = repository.getRegularSpendings(idUser)
     suspend fun updateNickname(request: IdUserWithVisibleName) = repository.updateNickname(request)
-    suspend fun deleteRegularSpending(idUser: UUID, idRegularSpending: UUID) =
-        repository.deleteRegularSpending(idUser = idUser, idRegularSpending = idRegularSpending)
+    suspend fun deleteRegularSpending(idUser: UUID, idSpendingSummary: UUID) =
+        repository.deleteRegularSpending(idUser = idUser, idSpendingSummary = idSpendingSummary)
 }

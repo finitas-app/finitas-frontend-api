@@ -50,7 +50,7 @@ class UserStoreRepositoryImpl(urlProvider: UrlProvider) : UserStoreRepository {
         }
     }
 
-    override suspend fun deleteRegularSpending(idUser: UUID, idRegularSpending: UUID) {
-        httpClient.delete("$url/$idUser/regular-spendings/$idRegularSpending")
+    override suspend fun deleteRegularSpending(idUser: UUID, idSpendingSummary: UUID) {
+        httpClient.delete("$url/$idUser/regular-spendings/$idSpendingSummary")
     }
 }

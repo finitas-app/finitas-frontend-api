@@ -1,7 +1,9 @@
 package com.finitas.domain.dto.store
 
+import com.finitas.config.serialization.LocalDateTimeSerializer
 import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class UserIdValue(
@@ -32,19 +34,15 @@ data class VisibleName(
 )
 
 @Serializable
-data class IdRegularSpending(
-    val id: SerializableUUID,
-)
-
-@Serializable
-data class UserDataDto(
-    val visibleName: String,
-    val regularSpendings: List<RegularSpendingDto>
+data class IdSpendingSummary(
+    val idSpendingSummary: SerializableUUID,
 )
 
 @Serializable
 data class RegularSpendingDto(
-    val idRegularSpending: SerializableUUID,
-    val cron: String,
+    val actualizationPeriod: Int,
+    val periodUnit: Int,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val lastActualizationDate: LocalDateTime,
     val spendingSummary: SpendingSummaryDto,
 )
