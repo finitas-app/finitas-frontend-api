@@ -12,7 +12,7 @@ class RoomMessageService(
     private val roomMessageRepository: RoomMessageRepository,
     private val notifierPort: UserNotifierPort,
 ) {
-    suspend fun sendMessages(sendMessageDto: SendMessageDto) {
+    suspend fun sendMessages(sendMessageDto: SendMessageDto): NewMessagesDto {
         val response = roomMessageRepository.sendMessage(sendMessageDto)
         notifierPort.notifyUser(
             UserNotificationDto(
@@ -25,13 +25,10 @@ class RoomMessageService(
                 }
             )
         )
+        return response
     }
 
     suspend fun getNewMessages(getMessagesFromVersionDto: GetMessagesFromVersionDto): SyncMessagesFromVersionResponse {
         return roomMessageRepository.getMessagesFromVersion(getMessagesFromVersionDto)
-            .messages
-            .filter { getMessagesFromVersionDto.idUser in it.users }
-            .flatMap { it.messages }
-            .let { SyncMessagesFromVersionResponse(it) }
     }
 }

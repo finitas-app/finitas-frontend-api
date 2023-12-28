@@ -20,12 +20,12 @@ data class RoomDto(
     @Serializable(UUIDSerializer::class)
     val idInvitationLink: UUID,
     val version: Int,
-    val roles: List<RoomRole>,
+    val roles: List<RoomRoleDto>,
     val members: List<RoomMember>,
 )
 
 @Serializable
-data class RoomRole(
+data class RoomRoleDto(
     @Serializable(UUIDSerializer::class)
     val idRole: UUID,
     val name: String,
@@ -36,7 +36,7 @@ data class RoomRole(
 data class RoomMember(
     @Serializable(UUIDSerializer::class)
     val idUser: UUID,
-    val roomRole: RoomRole? = null,
+    val roomRole: RoomRoleDto? = null,
 )
 
 enum class Authority {
@@ -50,4 +50,9 @@ enum class Authority {
 data class RoomVersionDto(
     val idRoom: SerializableUUID,
     val version: Int,
+)
+
+@Serializable
+data class UsersToNotifyResponse(
+    val usersToNotify: List<SerializableUUID>,
 )

@@ -11,6 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import java.util.*
 
 fun HttpRequestBuilder.contentTypeJson() = contentType(ContentType.Application.Json)
 
@@ -34,4 +35,9 @@ val httpClient: HttpClient = HttpClient(CIO) {
             }
         }
     }
+}
+
+fun HttpRequestBuilder.setRoomAuthorization(requester: UUID, idRoomContext: UUID) {
+    parameter("requester", requester)
+    parameter("idRoomContext", idRoomContext)
 }

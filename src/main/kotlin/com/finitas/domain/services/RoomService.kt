@@ -4,13 +4,14 @@ import com.finitas.domain.dto.store.CreateRoomDto
 import com.finitas.domain.dto.store.RoomDto
 import com.finitas.domain.ports.GetRoomsFromVersionsDto
 import com.finitas.domain.ports.RoomRepository
+import com.finitas.domain.ports.SyncRoomsResponse
 
 class RoomService(private val roomRepository: RoomRepository) {
     suspend fun createRoom(createRoomDto: CreateRoomDto): RoomDto {
         return roomRepository.createRoom(createRoomDto)
     }
 
-    suspend fun getRoomsFromVersions(getRoomsFromVersionsDto: GetRoomsFromVersionsDto): List<RoomDto> {
+    suspend fun getRoomsFromVersions(getRoomsFromVersionsDto: GetRoomsFromVersionsDto): SyncRoomsResponse {
         return roomRepository.getRoomFromVersion(getRoomsFromVersionsDto)
     }
 }

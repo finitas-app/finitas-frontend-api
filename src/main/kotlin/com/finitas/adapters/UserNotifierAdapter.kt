@@ -28,9 +28,9 @@ fun Route.userNotifier() {
     }
 }
 
-class UserNotifierAdapter: UserNotifierPort {
+class UserNotifierAdapter : UserNotifierPort {
     override suspend fun notifyUser(userNotificationDto: UserNotificationDto) {
-        userNotificationDto.targetUsers.forEach {(targetUsers, jsonData) ->
+        userNotificationDto.targetUsers.forEach { (targetUsers, jsonData) ->
             targetUsers.forEach {
                 val connection = connections[it]
                 connection?.send(
@@ -45,7 +45,6 @@ class UserNotifierAdapter: UserNotifierPort {
         }
     }
 }
-
 
 
 @Serializable

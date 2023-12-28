@@ -4,7 +4,7 @@ import com.finitas.domain.model.AuthUserRequest
 import com.finitas.domain.model.AuthUserResponse
 import com.finitas.domain.model.CreateUserRequest
 import com.finitas.domain.model.CreateUserResponse
-import java.util.UUID
+import java.util.*
 
 interface AuthRepository {
     suspend fun loginUser(request: AuthUserRequest): AuthUserResponse
