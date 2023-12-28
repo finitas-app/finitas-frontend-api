@@ -38,7 +38,7 @@ class UserStoreRepositoryImpl(urlProvider: UrlProvider) : UserStoreRepository {
     }
 
     override suspend fun getRegularSpendings(idUser: UUID): List<RegularSpendingDto> {
-        return httpClient.get("$url/$idUser/regular-spendings"){
+        return httpClient.get("$url/$idUser/regular-spendings") {
             contentTypeJson()
         }.body()
     }

@@ -27,6 +27,7 @@ data class SingleMessageDto(
 @Serializable
 data class NewMessagesDto(
     val messages: List<MessagesForUsers>,
+    val unavailableRooms: List<SerializableUUID>,
 )
 
 @Serializable

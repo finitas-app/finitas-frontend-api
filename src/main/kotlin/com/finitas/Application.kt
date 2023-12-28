@@ -1,8 +1,8 @@
 package com.finitas
 
-import com.finitas.config.serialization.configureSerialization
 import com.finitas.config.di.configureDependencyInjection
 import com.finitas.config.exceptions.configureExceptions
+import com.finitas.config.serialization.configureSerialization
 import com.finitas.config.web.configureAuth
 import com.finitas.config.web.configureCORS
 import com.finitas.config.web.configureWebsocket

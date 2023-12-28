@@ -1,9 +1,14 @@
 package com.finitas.domain.api
 
+import com.finitas.adapters.*
+import com.finitas.config.serialization.SerializableUUID
 import com.finitas.domain.dto.store.*
 import com.finitas.domain.model.Message
 import com.finitas.domain.ports.GetRoomsFromVersionsDto
+import com.finitas.domain.ports.JoinRoomWithInvitationDto
+import com.finitas.domain.services.RoomMembersService
 import com.finitas.domain.services.RoomMessageService
+import com.finitas.domain.services.RoomRolesService
 import com.finitas.domain.services.RoomService
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
@@ -13,11 +18,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Route.roomRouter() {
     val roomService: RoomService by inject()
     route("/rooms") {
-        messageRoute()
+        // TODO: rewrite it more Rest
         post {
             val userId = call.getPetitioner()
             val response = roomService.createRoom(
@@ -28,6 +34,7 @@ fun Route.roomRouter() {
             )
             call.respond(HttpStatusCode.Created, response)
         }
+        // TODO: rewrite it more Rest
         post("/sync") {
             val userId = call.getPetitioner()
             val response = roomService.getRoomsFromVersions(
@@ -36,24 +43,29 @@ fun Route.roomRouter() {
                     call.receive<GetRoomsFromVersionsRequest>().roomVersions,
                 )
             )
-            call.respond(HttpStatusCode.Created, response)
+            call.respond(HttpStatusCode.OK, response)
         }
+        messageRoute()
+        rolesRoute()
+        roomMembersRoute()
     }
 }
 
 fun Route.messageRoute() {
     val roomMessageService: RoomMessageService by inject()
     route("/messages") {
+        // TODO: rewrite it more Rest
         post {
             val userId = call.getPetitioner()
-            roomMessageService.sendMessages(
+            val response = roomMessageService.sendMessages(
                 SendMessageDto(
                     userId,
                     call.receive<SendMessageRequest>().messages,
                 )
             )
-            call.respond(HttpStatusCode.NoContent)
+            call.respond(HttpStatusCode.OK, response)
         }
+        // TODO: rewrite it more Rest
         post("/sync") {
             val userId = call.getPetitioner()
             val response = roomMessageService.getNewMessages(
@@ -65,9 +77,61 @@ fun Route.messageRoute() {
             call.respond(HttpStatusCode.OK, response)
         }
     }
-
 }
 
+fun Route.rolesRoute() {
+    val roomRolesService: RoomRolesService by inject()
+    route("/roles") {
+        // TODO: rewrite it more Rest
+        post {
+            val requester = call.getPetitioner()
+            val request: AddRoleRequest = call.receive()
+            roomRolesService.addRole(requester, request)
+            call.respond(HttpStatusCode.NoContent)
+        }
+        // TODO: rewrite it more Rest
+        put {
+            val requester = call.getPetitioner()
+            val request: UpdateRoleRequest = call.receive()
+            roomRolesService.updateRole(requester, request)
+            call.respond(HttpStatusCode.NoContent)
+        }
+        // TODO: rewrite it more Rest
+        delete {
+            val requester = call.getPetitioner()
+            val request: DeleteRoleRequest = call.receive()
+            roomRolesService.deleteRole(requester, request)
+            call.respond(HttpStatusCode.NoContent)
+        }
+    }
+}
+
+fun Route.roomMembersRoute() {
+    val roomMembersService: RoomMembersService by inject()
+    route("/users") {
+        // TODO: rewrite it more Rest
+        post {
+            val requester = call.getPetitioner()
+            val request: JoinRoomWithInvitationRequest = call.receive()
+            roomMembersService.addUserToRoomWithInvitationLink(request.toDto(requester))
+            call.respond(HttpStatusCode.NoContent)
+        }
+        // TODO: rewrite it more Rest
+        delete {
+            val requester = call.getPetitioner()
+            val request: DeleteUserRequest = call.receive()
+            roomMembersService.deleteUserFromRoom(requester, request)
+            call.respond(HttpStatusCode.NoContent)
+        }
+        // TODO: rewrite it more Rest
+        put("/roles") {
+            val requester = call.getPetitioner()
+            val request: AssignRoleToUserRequest = call.receive()
+            roomMembersService.assignRoleToUser(requester, request)
+            call.respond(HttpStatusCode.NoContent)
+        }
+    }
+}
 
 
 @Serializable
@@ -78,6 +142,7 @@ data class SyncMessagesFromVersionRequest(
 @Serializable
 data class SyncMessagesFromVersionResponse(
     val messages: List<Message>,
+    val unavailableRooms: List<SerializableUUID>,
 )
 
 @Serializable
@@ -94,3 +159,54 @@ data class CreateRoomRequest(
 data class GetRoomsFromVersionsRequest(
     val roomVersions: List<RoomVersionDto>,
 )
+
+@Serializable
+data class AddRoleRequest(
+    val idRoom: SerializableUUID,
+    val name: String,
+    val authorities: Set<Authority>,
+) {
+    fun toDto() = AddRoleDto(name, authorities)
+}
+
+@Serializable
+data class UpdateRoleRequest(
+    val idRoom: SerializableUUID,
+    val idRole: SerializableUUID,
+    val name: String,
+    val authorities: Set<Authority>,
+) {
+    fun toDto() = UpdateRoleDto(idRole, name, authorities)
+}
+
+@Serializable
+data class DeleteRoleRequest(
+    val idRoom: SerializableUUID,
+    val idRole: SerializableUUID,
+) {
+    fun toDto() = DeleteRoleDto(idRole)
+}
+
+@Serializable
+data class JoinRoomWithInvitationRequest(
+    val idInvitationLink: SerializableUUID,
+) {
+    fun toDto(idUser: UUID) = JoinRoomWithInvitationDto(idUser, idInvitationLink)
+}
+
+@Serializable
+data class DeleteUserRequest(
+    val idRoom: SerializableUUID,
+    val idUser: SerializableUUID,
+) {
+    fun toDto() = DeleteUserDto(idUser)
+}
+
+@Serializable
+data class AssignRoleToUserRequest(
+    val idRoom: SerializableUUID,
+    val idRole: SerializableUUID?,
+    val idUser: SerializableUUID,
+) {
+    fun toDto() = AssignRoleToUserDto(idRole, idUser)
+}

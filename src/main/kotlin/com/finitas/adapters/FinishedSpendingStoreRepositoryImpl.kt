@@ -21,7 +21,7 @@ class FinishedSpendingStoreRepositoryImpl(urlProvider: UrlProvider) : FinishedSp
     }
 
     override suspend fun getAllFinishedSpendings(idUser: UUID): List<FinishedSpendingDto> {
-        return httpClient.get("$url/$idUser"){
+        return httpClient.get("$url/$idUser") {
             contentTypeJson()
         }.body()
     }
