@@ -1,24 +1,19 @@
 package com.finitas.domain.dto.store
 
 import com.finitas.config.serialization.SerializableUUID
-import com.finitas.config.serialization.UUIDSerializer
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class CreateRoomDto(
-    @Serializable(UUIDSerializer::class)
-    val creator: UUID,
+    val creator: SerializableUUID,
     val roomName: String,
 )
 
 @Serializable
 data class RoomDto(
-    @Serializable(UUIDSerializer::class)
-    val idRoom: UUID,
+    val idRoom: SerializableUUID,
     val name: String,
-    @Serializable(UUIDSerializer::class)
-    val idInvitationLink: UUID,
+    val idInvitationLink: SerializableUUID,
     val version: Int,
     val roles: List<RoomRoleDto>,
     val members: List<RoomMember>,
@@ -26,24 +21,21 @@ data class RoomDto(
 
 @Serializable
 data class RoomRoleDto(
-    @Serializable(UUIDSerializer::class)
-    val idRole: UUID,
+    val idRole: SerializableUUID,
     val name: String,
     val authorities: Set<Authority>,
 )
 
 @Serializable
 data class RoomMember(
-    @Serializable(UUIDSerializer::class)
-    val idUser: UUID,
-    val roomRole: RoomRoleDto? = null,
+    val idUser: SerializableUUID,
+    val idRole: SerializableUUID? = null,
 )
 
 enum class Authority {
     READ_USERS_DATA,
     MODIFY_USERS_DATA,
     MODIFY_ROOM,
-    MODIFY
 }
 
 @Serializable

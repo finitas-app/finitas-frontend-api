@@ -1,6 +1,8 @@
 package com.finitas.domain.api
 
 import com.finitas.adapters.*
+import com.finitas.config.exceptions.BadRequestException
+import com.finitas.config.exceptions.ErrorCode
 import com.finitas.config.serialization.SerializableUUID
 import com.finitas.domain.dto.store.*
 import com.finitas.domain.model.Message
@@ -44,6 +46,20 @@ fun Route.roomRouter() {
                 )
             )
             call.respond(HttpStatusCode.OK, response)
+        }
+        post("/{idRoom}/regenerate-link") {
+            val userId = call.getPetitioner()
+            val idRoom = call.parameters["idRoom"]?.let { UUID.fromString(it) }
+                ?: throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
+            roomService.regenerateInvitationLink(userId, idRoom)
+            call.respond(HttpStatusCode.NoContent)
+        }
+        patch("/{idRoom}/name") {
+            val userId = call.getPetitioner()
+            val idRoom = call.parameters["idRoom"]?.let { UUID.fromString(it) }
+                ?: throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
+            roomService.changeRoomName(userId, idRoom, call.receive())
+            call.respond(HttpStatusCode.NoContent)
         }
         messageRoute()
         rolesRoute()

@@ -8,11 +8,13 @@ import com.finitas.domain.ports.ReceiptRepository
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 
 class ReceiptRepositoryImpl(private val urlProvider: UrlProvider) : ReceiptRepository {
 
     override suspend fun parseReceipt(receipt: ReceiptBinaryData): ReceiptParseResult {
         return httpClient.post(urlProvider.RECEIPT_SERVICE_HOST_URL) {
+            contentType(ContentType.MultiPart.FormData)
             setBody(receipt.toMultiPartFormDataContent())
             timeout {
                 requestTimeoutMillis = urlProvider.RECEIPT_PARSING_TIMEOUT

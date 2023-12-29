@@ -47,7 +47,7 @@ val roomModule = module {
     single<RoleRepository> { RoleRepositoryImpl(get()) }
     single<RoomMembersRepository> { RoomMembersRepositoryImpl(get()) }
     single { RoomMessageService(get(), get()) }
-    single { RoomService(get()) }
+    single { RoomService(get(), get()) }
     single { RoomRolesService(get(), get()) }
     single { RoomMembersService(get(), get()) }
 }
