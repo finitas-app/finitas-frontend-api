@@ -1,53 +1,50 @@
 package com.finitas.domain.dto.store
 
 import com.finitas.config.serialization.SerializableUUID
-import com.finitas.config.serialization.UUIDSerializer
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class CreateRoomDto(
-    @Serializable(UUIDSerializer::class)
-    val creator: UUID,
+    val creator: SerializableUUID,
     val roomName: String,
 )
 
 @Serializable
 data class RoomDto(
-    @Serializable(UUIDSerializer::class)
-    val idRoom: UUID,
+    val idRoom: SerializableUUID,
     val name: String,
-    @Serializable(UUIDSerializer::class)
-    val idInvitationLink: UUID,
+    val idInvitationLink: SerializableUUID,
     val version: Int,
-    val roles: List<RoomRole>,
+    val roles: List<RoomRoleDto>,
     val members: List<RoomMember>,
 )
 
 @Serializable
-data class RoomRole(
-    @Serializable(UUIDSerializer::class)
-    val idRole: UUID,
+data class RoomRoleDto(
+    val idRole: SerializableUUID,
     val name: String,
     val authorities: Set<Authority>,
 )
 
 @Serializable
 data class RoomMember(
-    @Serializable(UUIDSerializer::class)
-    val idUser: UUID,
-    val roomRole: RoomRole? = null,
+    val idUser: SerializableUUID,
+    val idRole: SerializableUUID? = null,
 )
 
 enum class Authority {
     READ_USERS_DATA,
     MODIFY_USERS_DATA,
     MODIFY_ROOM,
-    MODIFY
 }
 
 @Serializable
 data class RoomVersionDto(
     val idRoom: SerializableUUID,
     val version: Int,
+)
+
+@Serializable
+data class UsersToNotifyResponse(
+    val usersToNotify: List<SerializableUUID>,
 )

@@ -21,7 +21,7 @@ class ShoppingListStoreRepositoryImpl(urlProvider: UrlProvider) : ShoppingListSt
     }
 
     override suspend fun getAllShoppingLists(idUser: UUID): List<ShoppingListDto> {
-        return httpClient.get("$url/$idUser"){
+        return httpClient.get("$url/$idUser") {
             contentTypeJson()
         }.body()
     }

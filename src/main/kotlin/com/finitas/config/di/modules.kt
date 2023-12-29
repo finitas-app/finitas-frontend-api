@@ -8,8 +8,8 @@ import org.koin.dsl.module
 
 fun urlsModule(profile: Profile) = module {
     single<UrlProvider> {
-        when(profile) {
-            Profile.prod -> ProductionUrls
+        when (profile) {
+            Profile.kub -> ProductionUrls
             Profile.dev -> DevelopmentUrls
             Profile.docker -> DockerUrls
         }
@@ -44,8 +44,12 @@ val authModule = module {
 val roomModule = module {
     single<RoomMessageRepository> { RoomMessageRepositoryImpl(get()) }
     single<RoomRepository> { RoomRepositoryImpl(get()) }
+    single<RoleRepository> { RoleRepositoryImpl(get()) }
+    single<RoomMembersRepository> { RoomMembersRepositoryImpl(get()) }
     single { RoomMessageService(get(), get()) }
-    single { RoomService(get()) }
+    single { RoomService(get(), get()) }
+    single { RoomRolesService(get(), get()) }
+    single { RoomMembersService(get(), get()) }
 }
 
 val notificationModule = module {
