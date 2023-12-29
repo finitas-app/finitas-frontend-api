@@ -23,6 +23,7 @@ val httpClient: HttpClient = HttpClient(CIO) {
             }
         )
     }
+    install(HttpTimeout)
     defaultRequest {
         contentType(ContentType.Application.Json)
     }

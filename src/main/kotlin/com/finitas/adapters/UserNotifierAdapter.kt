@@ -1,5 +1,6 @@
 package com.finitas.adapters
 
+import com.finitas.config.Logger
 import com.finitas.domain.ports.UserNotificationDto
 import com.finitas.domain.ports.UserNotificationEvent
 import com.finitas.domain.ports.UserNotifierPort
@@ -29,7 +30,9 @@ fun Route.userNotifier() {
 }
 
 class UserNotifierAdapter : UserNotifierPort {
+    private val logger by Logger()
     override suspend fun notifyUser(userNotificationDto: UserNotificationDto) {
+        logger.info("Notify users: $userNotificationDto")
         userNotificationDto.targetUsers.forEach { (targetUsers, jsonData) ->
             targetUsers.forEach {
                 val connection = connections[it]
