@@ -4,6 +4,7 @@ import com.finitas.config.serialization.LocalDateTimeSerializer
 import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
+import java.util.*
 
 @Serializable
 data class UserIdValue(
@@ -19,6 +20,12 @@ data class GetVisibleNamesRequest(
 data class IdUserWithVisibleName(
     val idUser: SerializableUUID,
     val visibleName: String?,
+)
+
+@Serializable
+data class IdUserWithVersion(
+    val userId: SerializableUUID,
+    val version: Int
 )
 
 @Serializable

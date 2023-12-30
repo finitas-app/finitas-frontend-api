@@ -53,4 +53,17 @@ class UserStoreRepositoryImpl(urlProvider: UrlProvider) : UserStoreRepository {
     override suspend fun deleteRegularSpending(idUser: UUID, idSpendingSummary: UUID) {
         httpClient.delete("$url/$idUser/regular-spendings/$idSpendingSummary")
     }
+
+    override suspend fun getUser(idUser: UUID): UserDto {
+        return httpClient.get("$url/$idUser") {
+            contentTypeJson()
+        }.body()
+    }
+
+    override suspend fun getUsers(userIds: List<IdUserWithVersion>): List<UserDto> {
+        return httpClient.get(url) {
+            setBody(userIds)
+            contentTypeJson()
+        }.body()
+    }
 }

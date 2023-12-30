@@ -16,6 +16,13 @@ fun Route.userStoreRouting() {
 
     route("/users") {
         authenticate {
+            get("/{idUser}") {
+                call.respond(userStoreService.getUser(call.getPetitioner()))
+            }
+            get {
+                // todo: dania - fetch only allowed users
+                call.respond(userStoreService.getUsers(listOf()))
+            }
             route("/nicknames") {
                 post("/sync") {
                     val request = call.receive<GetVisibleNamesRequest>()
