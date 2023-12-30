@@ -20,7 +20,7 @@ class AuthService(
             userStoreRepository.insertUser(
                 UserDto(
                     idUser = createUserResponse.userId,
-                    visibleName = createUserResponse.nickname,
+                    visibleName = null,
                     regularSpendings = arrayListOf(),
                     categories = arrayListOf(),
                     version = -1,

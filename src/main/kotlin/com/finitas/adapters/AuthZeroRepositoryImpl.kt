@@ -288,7 +288,6 @@ data class SignupAuth0UserResponse(
         } catch (error: Exception) {
             throw InternalServerException(errorCode = ErrorCode.CREATE_USER_ERROR, cause = error)
         },
-        nickname = nickname
     )
 }
 

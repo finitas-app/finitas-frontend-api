@@ -18,14 +18,14 @@ data class GetVisibleNamesRequest(
 @Serializable
 data class IdUserWithVisibleName(
     val idUser: SerializableUUID,
-    val visibleName: String,
+    val visibleName: String?,
 )
 
 @Serializable
 data class UserDto(
     val idUser: SerializableUUID,
     val version: Int,
-    val visibleName: String,
+    val visibleName: String?,
     val regularSpendings: List<RegularSpendingDto>,
     val categories: List<CategoryDto>
 )
