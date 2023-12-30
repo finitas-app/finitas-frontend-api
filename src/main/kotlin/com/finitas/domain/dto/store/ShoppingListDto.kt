@@ -13,6 +13,8 @@ data class DeleteShoppingListRequest(
 class ShoppingListDto(
     val idShoppingList: SerializableUUID,
     val shoppingItems: List<ShoppingItemDto>,
+    val name: String,
+    val color: Int,
     override val version: Int,
     override val idUser: SerializableUUID,
     override val isDeleted: Boolean,

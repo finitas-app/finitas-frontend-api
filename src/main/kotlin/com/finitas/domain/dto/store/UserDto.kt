@@ -24,6 +24,7 @@ data class IdUserWithVisibleName(
 @Serializable
 data class UserDto(
     val idUser: SerializableUUID,
+    val version: Int,
     val visibleName: String,
     val regularSpendings: List<RegularSpendingDto>
 )
