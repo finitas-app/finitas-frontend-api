@@ -8,8 +8,6 @@ import kotlinx.serialization.Serializable
 import java.util.*
 
 interface RoomMembersRepository {
-
-    suspend fun getReachableUsersForUser(idUser: UUID, idRoom: UUID?): ReachableUsersDto
     suspend fun addUserToRoomWithInvitationLink(joinRoomWithInvitationDto: JoinRoomWithInvitationDto): UsersToNotifyResponse
     suspend fun deleteUserFromRoom(
         requester: UUID,

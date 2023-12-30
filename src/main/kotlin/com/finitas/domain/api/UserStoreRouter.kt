@@ -26,7 +26,8 @@ fun Route.userStoreRouting() {
             route("/nicknames") {
                 post("/sync") {
                     val request = call.receive<GetVisibleNamesRequest>()
-                    call.respond(userStoreService.getNicknames(request))
+                    val currentUserId = call.getPetitioner()
+                    call.respond(userStoreService.getNicknames(currentUserId, request))
                 }
                 patch {
                     userStoreService.updateNickname(

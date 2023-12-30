@@ -25,7 +25,7 @@ val storeModule = module {
 
     single<FinishedSpendingStoreService> { FinishedSpendingStoreService(get()) }
     single<ShoppingListStoreService> { ShoppingListStoreService(get()) }
-    single<UserStoreService> { UserStoreService(get()) }
+    single<UserStoreService> { UserStoreService(get(), get(), get()) }
 
     single<UserRoleService> { UserRoleService(get()) }
 }
@@ -54,4 +54,5 @@ val roomModule = module {
 
 val notificationModule = module {
     single<UserNotifierPort> { UserNotifierAdapter() }
+    single<ReachableUsersRepository> { ReachableUsersRepositoryImpl(get()) }
 }

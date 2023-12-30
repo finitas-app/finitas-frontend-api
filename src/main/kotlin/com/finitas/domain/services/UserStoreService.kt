@@ -1,21 +1,59 @@
 package com.finitas.domain.services
 
-import com.finitas.domain.dto.store.GetVisibleNamesRequest
-import com.finitas.domain.dto.store.IdUserWithVersion
-import com.finitas.domain.dto.store.IdUserWithVisibleName
-import com.finitas.domain.dto.store.RegularSpendingDto
-import com.finitas.domain.ports.UserStoreRepository
+import com.finitas.domain.dto.store.*
+import com.finitas.domain.ports.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.util.*
 
-class UserStoreService(private val repository: UserStoreRepository) {
+class UserStoreService(
+    private val repository: UserStoreRepository,
+    private val reachableUsersRepository: ReachableUsersRepository,
+    private val notifierPort: UserNotifierPort,
+) {
     suspend fun addRegularSpending(idUser: UUID, regularSpendings: List<RegularSpendingDto>) =
         repository.addRegularSpendings(idUser, regularSpendings)
 
-    suspend fun getNicknames(request: GetVisibleNamesRequest) = repository.getNicknames(request)
+    suspend fun getNicknames(requester: UUID, request: GetVisibleNamesRequest): List<IdUserWithVisibleName> {
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(requester, null)
+            .reachableUsers
+            .toSet()
+        val toRetrieve =
+        if (request.userIds.isEmpty()) {
+            GetVisibleNamesRequest(
+                reachableUsers.map { UserIdValue(it) }
+            )
+        } else {
+            request.copy(userIds = request.userIds.filter { it.userId in reachableUsers })
+        }
+        return repository.getNicknames(
+            toRetrieve
+        )
+    }
+
     suspend fun getRegularSpendings(idUser: UUID) = repository.getRegularSpendings(idUser)
-    suspend fun updateNickname(request: IdUserWithVisibleName) = repository.updateNickname(request)
+    suspend fun updateNickname(request: IdUserWithVisibleName) {
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(request.idUser, null)
+            .reachableUsers
+        repository.updateNickname(request)
+        notifierPort.notifyUser(
+            UserNotificationDto(
+                event = UserNotificationEvent.USERNAME_CHANGE,
+                targetUsers = listOf(
+                    TargetUsersNotificationDto(
+                        reachableUsers,
+                        Json.encodeToString(UserIdValue(request.idUser)),
+                    )
+                )
+            )
+        )
+    }
+
     suspend fun deleteRegularSpending(idUser: UUID, idSpendingSummary: UUID) =
         repository.deleteRegularSpending(idUser = idUser, idSpendingSummary = idSpendingSummary)
+
     suspend fun getUser(idUser: UUID) = repository.getUser(idUser)
     suspend fun getUsers(userIds: List<IdUserWithVersion>) = repository.getUsers(userIds)
 }

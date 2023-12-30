@@ -18,12 +18,6 @@ import java.util.*
 class RoomMembersRepositoryImpl(
     private val urlProvider: UrlProvider,
 ) : RoomMembersRepository {
-    override suspend fun getReachableUsersForUser(idUser: UUID, idRoom: UUID?): ReachableUsersDto {
-        return httpClient.get("${urlProvider.ROOM_MANAGER_HOST_URL}/rooms/users") {
-            parameter("idUser", idUser)
-            parameter("idRoom", idRoom)
-        }.body()
-    }
 
     override suspend fun addUserToRoomWithInvitationLink(joinRoomWithInvitationDto: JoinRoomWithInvitationDto): UsersToNotifyResponse {
         return httpClient.post("${urlProvider.ROOM_MANAGER_HOST_URL}/rooms/users") {

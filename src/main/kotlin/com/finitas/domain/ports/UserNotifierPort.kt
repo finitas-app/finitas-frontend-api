@@ -20,4 +20,5 @@ data class TargetUsersNotificationDto(
 enum class UserNotificationEvent {
     SYNC_MESSAGE,
     SYNC_ROOM,
+    USERNAME_CHANGE,
 }
