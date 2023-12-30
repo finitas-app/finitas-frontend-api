@@ -57,16 +57,10 @@ data class SynchronizationResponse<T>(
 )
 
 @Serializable
-data class SpendingRecordDataDto(
+data class SpendingRecordDto(
+    val idSpendingRecord: SerializableUUID,
     val idSpendingRecordData: SerializableUUID,
     val name: String,
     val price: SerializableBigDecimal,
-    val category: CategoryDto,
-)
-
-@Serializable
-data class CategoryDto(
     val idCategory: SerializableUUID,
-    val name: String,
-    val idParent: SerializableUUID?,
 )

@@ -16,11 +16,14 @@ class ShoppingListDto(
     override val version: Int,
     override val idUser: SerializableUUID,
     override val isDeleted: Boolean,
+    val isFinished: Boolean,
 ) : SynchronizableEntity
 
 @Serializable
 data class ShoppingItemDto(
     val idShoppingItem: SerializableUUID,
-    val isDone: Int,
-    val spendingRecordData: SpendingRecordDataDto,
+    val amount: Int,
+    val idSpendingRecordData: SerializableUUID,
+    val name: String,
+    val idCategory: SerializableUUID,
 )

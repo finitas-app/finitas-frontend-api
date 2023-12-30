@@ -25,7 +25,8 @@ data class IdUserWithVisibleName(
 data class UserDto(
     val idUser: SerializableUUID,
     val visibleName: String,
-    val regularSpendings: List<RegularSpendingDto>
+    val regularSpendings: List<RegularSpendingDto>,
+    val categories: List<CategoryDto>
 )
 
 @Serializable
@@ -42,7 +43,17 @@ data class IdSpendingSummary(
 data class RegularSpendingDto(
     val actualizationPeriod: Int,
     val periodUnit: Int,
-    @Serializable(with = LocalDateTimeSerializer::class)
+    @Serializable(LocalDateTimeSerializer::class)
     val lastActualizationDate: LocalDateTime,
-    val spendingSummary: SpendingSummaryDto,
+    val idSpendingSummary: SerializableUUID,
+    val createdAt: Int,
+    val name: String,
+    val spendingRecords: List<SpendingRecordDto>,
+)
+
+@Serializable
+data class CategoryDto(
+    val idCategory: SerializableUUID,
+    val name: String,
+    val idParent: SerializableUUID?,
 )
