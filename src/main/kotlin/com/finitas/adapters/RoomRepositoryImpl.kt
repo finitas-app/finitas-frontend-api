@@ -13,7 +13,7 @@ import com.finitas.domain.ports.SyncRoomsResponse
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.Serializable
-import java.util.UUID
+import java.util.*
 
 class RoomRepositoryImpl(private val urlProvider: UrlProvider) : RoomRepository {
     override suspend fun createRoom(createRoomDto: CreateRoomDto): RoomDto {

@@ -8,7 +8,6 @@ import com.finitas.domain.api.AddRoleRequest
 import com.finitas.domain.api.DeleteRoleRequest
 import com.finitas.domain.api.UpdateRoleRequest
 import com.finitas.domain.dto.store.Authority
-import com.finitas.domain.dto.store.RoomRoleDto
 import com.finitas.domain.dto.store.UsersToNotifyResponse
 import com.finitas.domain.ports.AddRoleResponse
 import com.finitas.domain.ports.RoleRepository

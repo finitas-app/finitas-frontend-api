@@ -14,10 +14,10 @@ class FinishedSpendingDto(
     val spendingSummary: SpendingSummaryDto,
     val idReceipt: SerializableUUID?,
     val purchaseDate: Int,
-    val version: Int,
-    val idUser: SerializableUUID,
-    val isDeleted: Boolean,
-)
+    override val version: Int,
+    override val idUser: SerializableUUID,
+    override val isDeleted: Boolean,
+) : SynchronizableEntity
 
 @Serializable
 data class SpendingSummaryDto(

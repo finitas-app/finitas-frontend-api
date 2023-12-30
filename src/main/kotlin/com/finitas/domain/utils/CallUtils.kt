@@ -12,7 +12,7 @@ fun ApplicationCall.getIdRoom() =
     try {
         parameters["idRoom"]?.let { UUID.fromString(it) }
     } catch (_: Exception) {
-        throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
+        throw BadRequestException("idRoom is not valid", ErrorCode.ID_ROOM_NOT_PROVIDED)
     }
         ?: throw BadRequestException("idRoom not provided", ErrorCode.ID_ROOM_NOT_PROVIDED)
 

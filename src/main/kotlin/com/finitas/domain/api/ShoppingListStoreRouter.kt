@@ -2,7 +2,7 @@ package com.finitas.domain.api
 
 import com.finitas.domain.dto.store.DeleteShoppingListRequest
 import com.finitas.domain.dto.store.ShoppingListDto
-import com.finitas.domain.dto.store.SynchronizationRequest
+import com.finitas.domain.dto.store.SynchronizationRequestFromClient
 import com.finitas.domain.model.Permission
 import com.finitas.domain.services.ShoppingListStoreService
 import com.finitas.domain.services.UserRoleService
@@ -23,30 +23,52 @@ fun Route.shoppingListStoreRouting() {
     route("/shopping-lists") {
         authenticate {
             put("/synchronize") {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.DELETE)
+                val request = call.receive<SynchronizationRequestFromClient<ShoppingListDto>>()
 
-                val request = call.receive<SynchronizationRequest<ShoppingListDto>>()
-                call.respond(shoppingListStoreService.synchronizeShoppingLists(request))
+                val requiredPermission =
+                    if (request.objects.isEmpty()) Permission.READ_USERS_DATA else Permission.MODIFY_USERS_DATA
+
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    requiredPermission
+                )
+
+                call.respond(shoppingListStoreService.synchronizeShoppingLists(
+                    request.mapToStoreRequest(call.getPetitioner())
+                ))
             }
             get("/{idUser}") {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ)
+                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)
 
                 call.respond(shoppingListStoreService.getAllShoppingLists(call.getIdUser()))
             }
             post {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.WRITE)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.createShoppingList(request))
             }
             patch {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.UPDATE)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.updateShoppingList(request))
             }
             delete {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.DELETE)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<DeleteShoppingListRequest>()
                 call.respond(shoppingListStoreService.deleteShoppingList(request))
