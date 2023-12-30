@@ -2,7 +2,6 @@ package com.finitas.domain.dto.store
 
 import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class DeleteFinishedSpendingRequest(
@@ -14,11 +13,11 @@ data class DeleteFinishedSpendingRequest(
 class FinishedSpendingDto(
     val idReceipt: SerializableUUID?,
     val purchaseDate: Int,
-    val version: Int,
-    val idUser: SerializableUUID,
-    val isDeleted: Boolean,
+    override val version: Int,
+    override val idUser: SerializableUUID,
+    override val isDeleted: Boolean,
     val idSpendingSummary: SerializableUUID,
     val createdAt: Int,
     val name: String,
     val spendingRecords: List<SpendingRecordDto>,
-)
+): SynchronizableEntity

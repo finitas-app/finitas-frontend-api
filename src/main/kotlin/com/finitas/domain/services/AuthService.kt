@@ -21,7 +21,9 @@ class AuthService(
                 UserDto(
                     idUser = createUserResponse.userId,
                     visibleName = createUserResponse.nickname,
-                    regularSpendings = arrayListOf()
+                    regularSpendings = arrayListOf(),
+                    categories = arrayListOf(),
+                    version = -1,
                 )
             )
         } catch (error: Exception) {
