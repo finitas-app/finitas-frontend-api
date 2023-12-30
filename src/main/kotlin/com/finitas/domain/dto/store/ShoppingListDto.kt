@@ -13,10 +13,10 @@ data class DeleteShoppingListRequest(
 class ShoppingListDto(
     val idShoppingList: SerializableUUID,
     val shoppingItems: List<ShoppingItemDto>,
-    val version: Int,
-    val idUser: SerializableUUID,
-    val isDeleted: Boolean,
-)
+    override val version: Int,
+    override val idUser: SerializableUUID,
+    override val isDeleted: Boolean,
+) : SynchronizableEntity
 
 @Serializable
 data class ShoppingItemDto(

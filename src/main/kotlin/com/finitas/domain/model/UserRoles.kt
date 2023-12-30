@@ -1,10 +1,8 @@
 package com.finitas.domain.model
 
 enum class Permission {
-    READ,
-    WRITE,
-    UPDATE,
-    DELETE,
+    READ_USERS_DATA,
+    MODIFY_USERS_DATA,
 }
 
 data class Role(

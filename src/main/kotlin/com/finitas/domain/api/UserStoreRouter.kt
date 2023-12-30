@@ -1,7 +1,6 @@
 package com.finitas.domain.api
 
 import com.finitas.domain.dto.store.*
-import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.services.UserStoreService
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
@@ -14,7 +13,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.userStoreRouting() {
     val userStoreService by inject<UserStoreService>()
-    val userRoleService by inject<UserRoleService>()
 
     route("/users") {
         authenticate {

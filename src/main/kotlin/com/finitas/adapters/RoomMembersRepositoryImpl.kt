@@ -6,7 +6,6 @@ import com.finitas.config.setRoomAuthorization
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.api.AssignRoleToUserRequest
 import com.finitas.domain.api.DeleteUserRequest
-import com.finitas.domain.dto.store.RoomDto
 import com.finitas.domain.dto.store.UsersToNotifyResponse
 import com.finitas.domain.ports.JoinRoomWithInvitationDto
 import com.finitas.domain.ports.ReachableUsersDto

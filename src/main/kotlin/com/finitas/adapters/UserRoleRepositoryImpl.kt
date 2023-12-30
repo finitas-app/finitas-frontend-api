@@ -7,6 +7,7 @@ import java.util.*
 
 class UserRoleRepositoryImpl : UserRoleRepository {
     override fun getUserRoleInRoom(idUser: UUID, idRoom: UUID): Role {
-        return Role(Permission.DELETE)
+        // todo: dania - create proper role fetch
+        return Role(Permission.READ_USERS_DATA)
     }
 }
