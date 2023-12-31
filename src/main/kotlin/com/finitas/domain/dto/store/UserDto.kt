@@ -64,4 +64,6 @@ data class CategoryDto(
     val idCategory: SerializableUUID,
     val name: String,
     val idParent: SerializableUUID?,
+    val version: Int?,
+    val isDeleted: Boolean,
 )

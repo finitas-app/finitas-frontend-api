@@ -28,11 +28,12 @@ fun Route.shoppingListStoreRouting() {
                 val requiredPermission =
                     if (request.objects.isEmpty()) Permission.READ_USERS_DATA else Permission.MODIFY_USERS_DATA
 
-                userRoleService.authUserByRoleInRoom(
+                // TODO: clear or reformat
+                /*userRoleService.authUserByRoleInRoom(
                     call.getPetitioner(),
                     call.getIdRoom(),
                     requiredPermission
-                )
+                )*/
 
                 call.respond(shoppingListStoreService.synchronizeShoppingLists(
                     request.mapToStoreRequest(call.getPetitioner())
@@ -44,21 +45,23 @@ fun Route.shoppingListStoreRouting() {
                 call.respond(shoppingListStoreService.getAllShoppingLists(call.getIdUser()))
             }
             post {
-                userRoleService.authUserByRoleInRoom(
+                //TODO: add verify
+                /*userRoleService.authUserByRoleInRoom(
                     call.getPetitioner(),
                     call.getIdRoom(),
                     Permission.MODIFY_USERS_DATA
-                )
+                )*/
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.createShoppingList(request))
             }
             patch {
-                userRoleService.authUserByRoleInRoom(
+                //TODO: add verify
+               /* userRoleService.authUserByRoleInRoom(
                     call.getPetitioner(),
                     call.getIdRoom(),
                     Permission.MODIFY_USERS_DATA
-                )
+                )*/
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.updateShoppingList(request))

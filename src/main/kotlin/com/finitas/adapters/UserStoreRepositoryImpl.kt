@@ -3,7 +3,11 @@ package com.finitas.adapters
 import com.finitas.config.contentTypeJson
 import com.finitas.config.httpClient
 import com.finitas.config.urls.UrlProvider
+import com.finitas.domain.api.ChangeSpendingCategoryDto
+import com.finitas.domain.api.SyncCategoriesRequest
+import com.finitas.domain.api.SyncCategoriesResponse
 import com.finitas.domain.dto.store.*
+import com.finitas.domain.ports.GetCategoriesFromVersionResponse
 import com.finitas.domain.ports.UserStoreRepository
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -64,6 +68,18 @@ class UserStoreRepositoryImpl(urlProvider: UrlProvider) : UserStoreRepository {
         return httpClient.get(url) {
             setBody(userIds)
             contentTypeJson()
+        }.body()
+    }
+
+    override suspend fun addCategories(requester: UUID, changeSpendingCategoryDto: ChangeSpendingCategoryDto) {
+        httpClient.post("$url/$requester/categories") {
+            setBody(changeSpendingCategoryDto)
+        }
+    }
+
+    override suspend fun getCategoriesFromVersions(syncCategoriesRequest: SyncCategoriesRequest): GetCategoriesFromVersionResponse {
+        return httpClient.post("$url/categories/sync") {
+            setBody(syncCategoriesRequest)
         }.body()
     }
 }

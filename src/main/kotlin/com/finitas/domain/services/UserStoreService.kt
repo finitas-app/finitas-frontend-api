@@ -1,10 +1,14 @@
 package com.finitas.domain.services
 
+import com.finitas.domain.api.ChangeSpendingCategoryDto
+import com.finitas.domain.api.SyncCategoriesRequest
+import com.finitas.domain.api.SyncCategoriesResponse
 import com.finitas.domain.dto.store.*
 import com.finitas.domain.ports.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.*
+import kotlin.reflect.jvm.internal.impl.load.java.JavaClassFinder.Request
 
 class UserStoreService(
     private val repository: UserStoreRepository,
@@ -56,4 +60,30 @@ class UserStoreService(
 
     suspend fun getUser(idUser: UUID) = repository.getUser(idUser)
     suspend fun getUsers(userIds: List<IdUserWithVersion>) = repository.getUsers(userIds)
+
+    suspend fun addCategories(requester: UUID, changeSpendingCategoryDto: ChangeSpendingCategoryDto) {
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(requester, null)
+            .reachableUsers
+        repository.addCategories(requester, changeSpendingCategoryDto)
+        notifierPort.notifyUser(
+            UserNotificationDto(
+                event = UserNotificationEvent.CATEGORY_CHANGED,
+                targetUsers = listOf(
+                    TargetUsersNotificationDto(
+                        reachableUsers,
+                        Json.encodeToString(UserIdValue(requester)),
+                    )
+                )
+            )
+        )
+    }
+
+    suspend fun syncCategories(requester: UUID, syncCategoriesRequest: SyncCategoriesRequest): SyncCategoriesResponse {
+        //TODO : unavailableUsers
+        return SyncCategoriesResponse(
+            repository.getCategoriesFromVersions(syncCategoriesRequest).userCategories,
+            listOf(),
+        )
+    }
 }

@@ -21,4 +21,6 @@ enum class UserNotificationEvent {
     SYNC_MESSAGE,
     SYNC_ROOM,
     USERNAME_CHANGE,
+    CATEGORY_CHANGED,
+    SHOPPING_LIST_CHANGED,
 }

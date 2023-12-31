@@ -23,6 +23,7 @@ class ShoppingListDto(
 
 @Serializable
 data class ShoppingItemDto(
+    // TODO delete unnecessary id, left only `idSpendingRecordData`
     val idShoppingItem: SerializableUUID,
     val amount: Int,
     val idSpendingRecordData: SerializableUUID,
