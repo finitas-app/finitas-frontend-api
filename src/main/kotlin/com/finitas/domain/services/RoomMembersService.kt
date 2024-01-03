@@ -14,7 +14,8 @@ class RoomMembersService(
         //todo: notify partly but not whole room
         notifierPort.notifyUser(
             UserNotificationDto(
-                UserNotificationEvent.SYNC_ROOM,
+                UserNotificationEvent.ADD_USER_TO_ROOM,
+                //TODO: add some info to jsonData to optimize sync process
                 listOf(TargetUsersNotificationDto(response.usersToNotify))
             )
         )
@@ -25,10 +26,10 @@ class RoomMembersService(
         deleteUserRequest: DeleteUserRequest,
     ) {
         val response = roomMembersRepository.deleteUserFromRoom(requester, deleteUserRequest)
-        //todo: notify partly but not whole room
         notifierPort.notifyUser(
             UserNotificationDto(
-                UserNotificationEvent.SYNC_ROOM,
+                UserNotificationEvent.DELETE_USER_FROM_ROOM,
+                //TODO: add some info to jsonData to optimize sync process
                 listOf(TargetUsersNotificationDto(response.usersToNotify))
             )
         )
@@ -39,10 +40,10 @@ class RoomMembersService(
         assignRoleToUserRequest: AssignRoleToUserRequest,
     ) {
         val response = roomMembersRepository.assignRoleToUser(requester, assignRoleToUserRequest)
-        //todo: notify partly but not whole room
         notifierPort.notifyUser(
             UserNotificationDto(
-                UserNotificationEvent.SYNC_ROOM,
+                UserNotificationEvent.ASSIGN_ROLE_TO_USER,
+                //TODO: add some info to jsonData to optimize sync process
                 listOf(TargetUsersNotificationDto(response.usersToNotify))
             )
         )

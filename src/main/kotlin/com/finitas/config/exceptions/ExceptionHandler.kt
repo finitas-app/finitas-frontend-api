@@ -18,7 +18,8 @@ suspend fun Application.handleException(call: ApplicationCall, exception: Except
     }
 
     else -> {
-        log.error("Unknown exception", exception)
+        log.error("Unknown exception: ${exception.message}", exception)
+        exception.printStackTrace()
         call.respond(
             HttpStatusCode.InternalServerError,
             ErrorResponse(

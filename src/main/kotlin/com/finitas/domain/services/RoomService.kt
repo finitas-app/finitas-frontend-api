@@ -22,8 +22,7 @@ class RoomService(
         val response = roomRepository.regenerateInvitationLink(requester, idRoom)
         userNotifierPort.notifyUser(
             UserNotificationDto(
-                //TODO: Split only for regenerate link
-                UserNotificationEvent.SYNC_ROOM,
+                UserNotificationEvent.REGENERATE_INVITATION_LINK,
                 targetUsers = listOf(TargetUsersNotificationDto(response.usersToNotify, null))
             )
         )
@@ -33,8 +32,8 @@ class RoomService(
         val response = roomRepository.changeRoomName(requester, idRoom, changeRoomNameRequest)
         userNotifierPort.notifyUser(
             UserNotificationDto(
-                //TODO: Split only for regenerate link
-                UserNotificationEvent.SYNC_ROOM,
+                UserNotificationEvent.CHANGE_ROOM_NAME,
+                //TODO: add some info to jsonData to optimize sync process
                 targetUsers = listOf(TargetUsersNotificationDto(response.usersToNotify, null))
             )
         )
