@@ -9,4 +9,6 @@ interface FinishedSpendingStoreRepository {
     suspend fun createFinishedSpending(dto: FinishedSpendingDto): UpdateResponse
     suspend fun updateFinishedSpending(dto: FinishedSpendingDto): UpdateResponse
     suspend fun deleteFinishedSpending(request: DeleteFinishedSpendingRequest): UpdateResponse
+    suspend fun updateWithChangedItems(idUserWithEntities: IdUserWithEntities<FinishedSpendingDto>)
+    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>): List<FetchUpdatesResponse<FinishedSpendingDto>>
 }

@@ -17,18 +17,6 @@ data class GetVisibleNamesRequest(
 )
 
 @Serializable
-data class IdUserWithVisibleName(
-    val idUser: SerializableUUID,
-    val visibleName: String?,
-)
-
-@Serializable
-data class IdUserWithVersion(
-    val userId: SerializableUUID,
-    val version: Int
-)
-
-@Serializable
 data class UserDto(
     val idUser: SerializableUUID,
     val version: Int,

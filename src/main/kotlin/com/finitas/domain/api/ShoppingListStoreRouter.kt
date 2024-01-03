@@ -1,14 +1,15 @@
 package com.finitas.domain.api
 
 import com.finitas.domain.dto.store.DeleteShoppingListRequest
+import com.finitas.domain.dto.store.IdUserWithVersion
 import com.finitas.domain.dto.store.ShoppingListDto
-import com.finitas.domain.dto.store.SynchronizationRequestFromClient
 import com.finitas.domain.model.Permission
 import com.finitas.domain.services.ShoppingListStoreService
 import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -22,22 +23,20 @@ fun Route.shoppingListStoreRouting() {
 
     route("/shopping-lists") {
         authenticate {
-            put("/synchronize") {
-                val request = call.receive<SynchronizationRequestFromClient<ShoppingListDto>>()
-
-                val requiredPermission =
-                    if (request.objects.isEmpty()) Permission.READ_USERS_DATA else Permission.MODIFY_USERS_DATA
-
-                // TODO: clear or reformat
-                /*userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    requiredPermission
-                )*/
-
-                call.respond(shoppingListStoreService.synchronizeShoppingLists(
-                    request.mapToStoreRequest(call.getPetitioner())
-                ))
+            put {
+                val request = call.receive<List<ShoppingListDto>>()
+                shoppingListStoreService.updateWithChangedItems(
+                    request,
+                    call.getPetitioner()
+                )
+                call.respond(HttpStatusCode.NoContent)
+            }
+            get {
+                // todo: verify allowance to fetch users
+                val request = call.receive<List<IdUserWithVersion>>()
+                call.respond(
+                    shoppingListStoreService.fetchUsersUpdates(request)
+                )
             }
             get("/{idUser}") {
                 userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)

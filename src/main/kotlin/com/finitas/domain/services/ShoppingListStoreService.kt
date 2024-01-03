@@ -1,9 +1,6 @@
 package com.finitas.domain.services
 
-import com.finitas.domain.dto.store.DeleteShoppingListRequest
-import com.finitas.domain.dto.store.ShoppingListDto
-import com.finitas.domain.dto.store.SynchronizationRequest
-import com.finitas.domain.dto.store.SynchronizationResponse
+import com.finitas.domain.dto.store.*
 import com.finitas.domain.ports.*
 import java.util.*
 
@@ -82,4 +79,14 @@ class ShoppingListStoreService(
 
     suspend fun deleteShoppingList(request: DeleteShoppingListRequest) =
         shoppingListStoreRepository.deleteShoppingList(request)
+
+    suspend fun updateWithChangedItems(request: List<ShoppingListDto>, petitioner: UUID) =
+        shoppingListStoreRepository.updateWithChangedItems(
+            IdUserWithEntities(
+                idUser = petitioner,
+                changedValues = request
+            )
+        )
+
+    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>) = shoppingListStoreRepository.fetchUsersUpdates(request)
 }

@@ -46,4 +46,18 @@ class FinishedSpendingStoreRepositoryImpl(urlProvider: UrlProvider) : FinishedSp
             setBody(request)
         }.body()
     }
+
+    override suspend fun updateWithChangedItems(idUserWithEntities: IdUserWithEntities<FinishedSpendingDto>) {
+        return httpClient.put(url) {
+            setBody(idUserWithEntities)
+            contentTypeJson()
+        }.body()
+    }
+
+    override suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>): List<FetchUpdatesResponse<FinishedSpendingDto>> {
+        return httpClient.get(url) {
+            setBody(request)
+            contentTypeJson()
+        }.body<List<FetchUpdatesResponse<FinishedSpendingDto>>>()
+    }
 }

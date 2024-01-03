@@ -1,15 +1,13 @@
 package com.finitas.domain.api
 
-import com.finitas.domain.dto.store.DeleteFinishedSpendingRequest
-import com.finitas.domain.dto.store.FinishedSpendingDto
-import com.finitas.domain.dto.store.SynchronizationRequest
-import com.finitas.domain.dto.store.SynchronizationRequestFromClient
+import com.finitas.domain.dto.store.*
 import com.finitas.domain.model.Permission
 import com.finitas.domain.services.FinishedSpendingStoreService
 import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -23,17 +21,19 @@ fun Route.finishedSpendingStoreRouting() {
 
     route("/finished-spendings") {
         authenticate {
-            put("/synchronize") {
-                val request = call.receive<SynchronizationRequestFromClient<FinishedSpendingDto>>()
-                val requiredPermission =
-                    if (request.objects.isEmpty()) Permission.READ_USERS_DATA else Permission.MODIFY_USERS_DATA
-
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), requiredPermission)
-
+            put {
+                val request = call.receive<List<FinishedSpendingDto>>()
+                finishedSpendingsService.updateWithChangedItems(
+                    request,
+                    call.getPetitioner()
+                )
+                call.respond(HttpStatusCode.NoContent)
+            }
+            get {
+                // todo: verify allowance to fetch users
+                val request = call.receive<List<IdUserWithVersion>>()
                 call.respond(
-                    finishedSpendingsService.synchronizeFinishedSpendings(
-                        request.mapToStoreRequest(call.getPetitioner())
-                    )
+                    finishedSpendingsService.fetchUsersUpdates(request)
                 )
             }
             get("/{idUser}") {
