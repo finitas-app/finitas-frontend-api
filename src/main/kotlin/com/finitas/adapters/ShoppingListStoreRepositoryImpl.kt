@@ -46,4 +46,18 @@ class ShoppingListStoreRepositoryImpl(urlProvider: UrlProvider) : ShoppingListSt
             contentTypeJson()
         }.body()
     }
+
+    override suspend fun updateWithChangedItems(idUserWithEntities: IdUserWithEntities<ShoppingListDto>) {
+        httpClient.put(url) {
+            setBody(idUserWithEntities)
+            contentTypeJson()
+        }
+    }
+
+    override suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>): List<FetchUpdatesResponse<ShoppingListDto>> {
+        return httpClient.get(url) {
+            setBody(request)
+            contentTypeJson()
+        }.body<List<FetchUpdatesResponse<ShoppingListDto>>>()
+    }
 }

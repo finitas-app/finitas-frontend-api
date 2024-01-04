@@ -1,8 +1,6 @@
 package com.finitas.domain.services
 
-import com.finitas.domain.dto.store.DeleteFinishedSpendingRequest
-import com.finitas.domain.dto.store.FinishedSpendingDto
-import com.finitas.domain.dto.store.SynchronizationRequest
+import com.finitas.domain.dto.store.*
 import com.finitas.domain.ports.FinishedSpendingStoreRepository
 import java.util.*
 
@@ -19,4 +17,14 @@ class FinishedSpendingStoreService(private val repository: FinishedSpendingStore
 
     suspend fun deleteFinishedSpending(request: DeleteFinishedSpendingRequest) =
         repository.deleteFinishedSpending(request)
+
+    suspend fun updateWithChangedItems(request: List<FinishedSpendingDto>, petitioner: UUID) =
+        repository.updateWithChangedItems(
+            IdUserWithEntities(
+                idUser = petitioner,
+                changedValues = request
+            )
+        )
+
+    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>) = repository.fetchUsersUpdates(request)
 }

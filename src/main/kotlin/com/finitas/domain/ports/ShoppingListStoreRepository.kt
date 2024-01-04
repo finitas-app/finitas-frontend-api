@@ -9,4 +9,6 @@ interface ShoppingListStoreRepository {
     suspend fun createShoppingList(dto: ShoppingListDto): UpdateResponse
     suspend fun updateShoppingList(dto: ShoppingListDto): UpdateResponse
     suspend fun deleteShoppingList(request: DeleteShoppingListRequest): UpdateResponse
+    suspend fun updateWithChangedItems(idUserWithEntities: IdUserWithEntities<ShoppingListDto>)
+    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>): List<FetchUpdatesResponse<ShoppingListDto>>
 }
