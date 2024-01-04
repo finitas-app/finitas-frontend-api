@@ -57,7 +57,6 @@ data class SynchronizationResponse<T>(
 
 @Serializable
 data class SpendingRecordDto(
-    val idSpendingRecord: SerializableUUID,
     val idSpendingRecordData: SerializableUUID,
     val name: String,
     val price: SerializableBigDecimal,

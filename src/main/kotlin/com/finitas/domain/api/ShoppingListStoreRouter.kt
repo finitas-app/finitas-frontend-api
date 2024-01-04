@@ -23,20 +23,23 @@ fun Route.shoppingListStoreRouting() {
 
     route("/shopping-lists") {
         authenticate {
-            put {
-                val request = call.receive<List<ShoppingListDto>>()
-                shoppingListStoreService.updateWithChangedItems(
-                    request,
-                    call.getPetitioner()
-                )
-                call.respond(HttpStatusCode.NoContent)
-            }
-            get {
-                // todo: verify allowance to fetch users
-                val request = call.receive<List<IdUserWithVersion>>()
-                call.respond(
-                    shoppingListStoreService.fetchUsersUpdates(request)
-                )
+            route("/sync") {
+                put {
+                    val request = call.receive<List<ShoppingListDto>>()
+                    shoppingListStoreService.updateWithChangedItems(
+                        request,
+                        call.getPetitioner()
+                    )
+                    call.respond(HttpStatusCode.NoContent)
+                }
+                post {
+                    // todo: verify allowance to fetch users
+                    val request = call.receive<List<IdUserWithVersion>>()
+                    call.respond(
+                        HttpStatusCode.OK,
+                        shoppingListStoreService.fetchUsersUpdates(request)
+                    )
+                }
             }
             get("/{idUser}") {
                 userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)

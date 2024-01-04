@@ -14,6 +14,7 @@ import java.util.*
 
 typealias SerializableUUID = @Serializable(UUIDSerializer::class) UUID
 typealias SerializableBigDecimal = @Serializable(BigDecimalSerializer::class) BigDecimal
+typealias SerializableLocalDateTime = @Serializable(LocalDateTimeSerializer::class) LocalDateTime
 
 object UUIDSerializer : KSerializer<UUID> {
     override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)

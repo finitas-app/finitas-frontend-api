@@ -21,20 +21,22 @@ fun Route.finishedSpendingStoreRouting() {
 
     route("/finished-spendings") {
         authenticate {
-            put {
-                val request = call.receive<List<FinishedSpendingDto>>()
-                finishedSpendingsService.updateWithChangedItems(
-                    request,
-                    call.getPetitioner()
-                )
-                call.respond(HttpStatusCode.NoContent)
-            }
-            get {
-                // todo: verify allowance to fetch users
-                val request = call.receive<List<IdUserWithVersion>>()
-                call.respond(
-                    finishedSpendingsService.fetchUsersUpdates(request)
-                )
+            route("/sync") {
+                put {
+                    val request = call.receive<List<FinishedSpendingDto>>()
+                    finishedSpendingsService.updateWithChangedItems(
+                        request,
+                        call.getPetitioner()
+                    )
+                    call.respond(HttpStatusCode.NoContent)
+                }
+                post {
+                    // todo: verify allowance to fetch users
+                    val request = call.receive<List<IdUserWithVersion>>()
+                    call.respond(
+                        finishedSpendingsService.fetchUsersUpdates(request)
+                    )
+                }
             }
             get("/{idUser}") {
                 userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)
