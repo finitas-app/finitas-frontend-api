@@ -17,10 +17,6 @@ class ReachableUsersRepositoryImpl(
             parameter("idRoom", idRoom)
         }.body()
 
-        if (response.reachableUsers.isEmpty()) {
-            return response.copy(reachableUsers = listOf(idUser))
-        }
-
         return response
     }
 }

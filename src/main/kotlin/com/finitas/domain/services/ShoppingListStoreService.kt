@@ -35,35 +35,15 @@ class ShoppingListStoreService(
     suspend fun getAllShoppingLists(idUser: UUID) =
         shoppingListStoreRepository.getAllShoppingLists(idUser)
 
-    suspend fun createShoppingList(dto: ShoppingListDto) {
-        //TODO: verify requester
-        val reachableUsers = reachableUsersRepository
-            .getReachableUsersForUser(dto.idUser, null)
-            .reachableUsers
+    suspend fun createShoppingList(requester: UUID, dto: ShoppingListDto) {
 
+        //TODO: verify requester
         //TODO: use response
         val response = shoppingListStoreRepository.createShoppingList(dto)
-        userNotifierPort.notifyUser(
-            UserNotificationDto(
-                event = UserNotificationEvent.SHOPPING_LIST_CHANGED,
-                targetUsers = listOf(
-                    TargetUsersNotificationDto(
-                        reachableUsers,
-                        null,
-                    )
-                )
-            )
-        )
-    }
 
-
-    suspend fun updateShoppingList(dto: ShoppingListDto) {
-        //TODO: verify requester
         val reachableUsers = reachableUsersRepository
             .getReachableUsersForUser(dto.idUser, null)
             .reachableUsers
-        //TODO: use response
-        val response = shoppingListStoreRepository.updateShoppingList(dto)
         userNotifierPort.notifyUser(
             UserNotificationDto(
                 event = UserNotificationEvent.SHOPPING_LIST_CHANGED,
@@ -77,16 +57,73 @@ class ShoppingListStoreService(
         )
     }
 
-    suspend fun deleteShoppingList(request: DeleteShoppingListRequest) =
-        shoppingListStoreRepository.deleteShoppingList(request)
 
-    suspend fun updateWithChangedItems(request: List<ShoppingListDto>, petitioner: UUID) =
+    suspend fun updateShoppingList(requester: UUID, dto: ShoppingListDto) {
+        //TODO: verify requester
+        //TODO: use response
+        val response = shoppingListStoreRepository.updateShoppingList(dto)
+
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(dto.idUser, null)
+            .reachableUsers
+        userNotifierPort.notifyUser(
+            UserNotificationDto(
+                event = UserNotificationEvent.SHOPPING_LIST_CHANGED,
+                targetUsers = listOf(
+                    TargetUsersNotificationDto(
+                        reachableUsers,
+                        null,
+                    )
+                )
+            )
+        )
+    }
+
+    suspend fun deleteShoppingList(requester: UUID, request: DeleteShoppingListRequest) {
+        //TODO: verify requester
+        //TODO: use response
+        val response =shoppingListStoreRepository.deleteShoppingList(request)
+
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(request.idUser, null)
+            .reachableUsers
+        userNotifierPort.notifyUser(
+            UserNotificationDto(
+                event = UserNotificationEvent.SHOPPING_LIST_CHANGED,
+                targetUsers = listOf(
+                    TargetUsersNotificationDto(
+                        reachableUsers,
+                        null,
+                    )
+                )
+            )
+        )
+    }
+
+    suspend fun updateWithChangedItems(request: List<ShoppingListDto>, petitioner: UUID) {
+        //TODO: verify requester
+        val reachableUsers = reachableUsersRepository
+            .getReachableUsersForUser(petitioner, null)
+            .reachableUsers
         shoppingListStoreRepository.updateWithChangedItems(
             IdUserWithEntities(
                 idUser = petitioner,
                 changedValues = request
             )
         )
+        userNotifierPort.notifyUser(
+            UserNotificationDto(
+                event = UserNotificationEvent.SHOPPING_LIST_CHANGED,
+                targetUsers = listOf(
+                    TargetUsersNotificationDto(
+                        reachableUsers,
+                        null,
+                    )
+                )
+            )
+        )
+    }
+
 
     suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>) = shoppingListStoreRepository.fetchUsersUpdates(request)
 }

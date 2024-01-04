@@ -28,4 +28,5 @@ enum class UserNotificationEvent {
     ADD_USER_TO_ROOM,
     DELETE_USER_FROM_ROOM,
     ASSIGN_ROLE_TO_USER,
+    FINISHED_SPENDING_CHANGED,
 }

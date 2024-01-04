@@ -55,7 +55,7 @@ fun Route.shoppingListStoreRouting() {
                 )*/
 
                 val request = call.receive<ShoppingListDto>()
-                call.respond(shoppingListStoreService.createShoppingList(request))
+                call.respond(shoppingListStoreService.createShoppingList(call.getPetitioner(), request))
             }
             patch {
                 //TODO: add verify
@@ -66,7 +66,7 @@ fun Route.shoppingListStoreRouting() {
                 )*/
 
                 val request = call.receive<ShoppingListDto>()
-                call.respond(shoppingListStoreService.updateShoppingList(request))
+                call.respond(shoppingListStoreService.updateShoppingList(call.getPetitioner(), request))
             }
             delete {
                 userRoleService.authUserByRoleInRoom(
@@ -76,7 +76,7 @@ fun Route.shoppingListStoreRouting() {
                 )
 
                 val request = call.receive<DeleteShoppingListRequest>()
-                call.respond(shoppingListStoreService.deleteShoppingList(request))
+                call.respond(shoppingListStoreService.deleteShoppingList(call.getPetitioner(), request))
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.finitas.domain.api
 
-import com.finitas.domain.dto.store.*
+import com.finitas.domain.dto.store.DeleteFinishedSpendingRequest
+import com.finitas.domain.dto.store.FinishedSpendingDto
+import com.finitas.domain.dto.store.IdUserWithVersion
 import com.finitas.domain.model.Permission
 import com.finitas.domain.services.FinishedSpendingStoreService
 import com.finitas.domain.services.UserRoleService
@@ -44,22 +46,34 @@ fun Route.finishedSpendingStoreRouting() {
                 call.respond(finishedSpendingsService.getAllFinishedSpendings(call.getIdUser()))
             }
             post {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.MODIFY_USERS_DATA)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<FinishedSpendingDto>()
-                call.respond(finishedSpendingsService.createFinishedSpending(request))
+                call.respond(finishedSpendingsService.createFinishedSpending(call.getPetitioner(), request))
             }
             patch {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.MODIFY_USERS_DATA)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<FinishedSpendingDto>()
-                call.respond(finishedSpendingsService.updateFinishedSpending(request))
+                call.respond(finishedSpendingsService.updateFinishedSpending(call.getPetitioner(), request))
             }
             delete {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.MODIFY_USERS_DATA)
+                userRoleService.authUserByRoleInRoom(
+                    call.getPetitioner(),
+                    call.getIdRoom(),
+                    Permission.MODIFY_USERS_DATA
+                )
 
                 val request = call.receive<DeleteFinishedSpendingRequest>()
-                call.respond(finishedSpendingsService.deleteFinishedSpending(request))
+                call.respond(finishedSpendingsService.deleteFinishedSpending(call.getPetitioner(), request))
             }
         }
     }

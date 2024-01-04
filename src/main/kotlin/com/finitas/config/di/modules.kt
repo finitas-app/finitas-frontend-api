@@ -23,7 +23,7 @@ val storeModule = module {
 
     single<UserRoleRepository> { UserRoleRepositoryImpl() }
 
-    single<FinishedSpendingStoreService> { FinishedSpendingStoreService(get()) }
+    single<FinishedSpendingStoreService> { FinishedSpendingStoreService(get(), get(), get()) }
     single<ShoppingListStoreService> { ShoppingListStoreService(get(), get(), get()) }
     single<UserStoreService> { UserStoreService(get(), get(), get()) }
 
