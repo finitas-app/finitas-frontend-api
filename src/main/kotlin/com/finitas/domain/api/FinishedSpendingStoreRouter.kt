@@ -41,36 +41,20 @@ fun Route.finishedSpendingStoreRouting() {
                 }
             }
             get("/{idUser}") {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)
 
                 call.respond(finishedSpendingsService.getAllFinishedSpendings(call.getIdUser()))
             }
             post {
-                userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )
 
                 val request = call.receive<FinishedSpendingDto>()
                 call.respond(finishedSpendingsService.createFinishedSpending(call.getPetitioner(), request))
             }
             patch {
-                userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )
 
                 val request = call.receive<FinishedSpendingDto>()
                 call.respond(finishedSpendingsService.updateFinishedSpending(call.getPetitioner(), request))
             }
             delete {
-                userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )
 
                 val request = call.receive<DeleteFinishedSpendingRequest>()
                 call.respond(finishedSpendingsService.deleteFinishedSpending(call.getPetitioner(), request))

@@ -42,7 +42,6 @@ fun Route.shoppingListStoreRouting() {
                 }
             }
             get("/{idUser}") {
-                userRoleService.authUserByRoleInRoom(call.getPetitioner(), call.getIdRoom(), Permission.READ_USERS_DATA)
 
                 call.respond(shoppingListStoreService.getAllShoppingLists(call.getIdUser()))
             }
@@ -69,11 +68,6 @@ fun Route.shoppingListStoreRouting() {
                 call.respond(shoppingListStoreService.updateShoppingList(call.getPetitioner(), request))
             }
             delete {
-                userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )
 
                 val request = call.receive<DeleteShoppingListRequest>()
                 call.respond(shoppingListStoreService.deleteShoppingList(call.getPetitioner(), request))
