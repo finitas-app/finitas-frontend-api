@@ -53,7 +53,6 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4J_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.630")
 }
 
 tasks.withType<KotlinCompile> {
