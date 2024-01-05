@@ -13,11 +13,9 @@ fun Route.receiptRouting() {
     val service by inject<ReceiptService>()
 
     route("/receipts") {
-        authenticate {
-            post("/parse") {
-                val receipt = ReceiptBinaryData(call.receiveMultipart())
-                call.respond(service.parseReceipt(receipt))
-            }
+        post("/parse") {
+            val receipt = ReceiptBinaryData(call.receiveMultipart())
+            call.respond(service.parseReceipt(receipt))
         }
     }
 }
