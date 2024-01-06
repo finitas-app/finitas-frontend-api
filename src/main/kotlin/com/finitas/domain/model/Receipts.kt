@@ -1,13 +1,15 @@
 package com.finitas.domain.model
 
-import io.ktor.client.request.forms.*
-import io.ktor.http.content.*
+import com.finitas.config.serialization.SerializableBigDecimal
 import kotlinx.serialization.Serializable
 
-@JvmInline
-value class ReceiptBinaryData(private val raw: MultiPartData) {
-    suspend fun toMultiPartFormDataContent() = MultiPartFormDataContent(raw.readAllParts())
-}
+@Serializable
+data class Base64Receipt(
+    val value: String
+)
 
 @Serializable
-data class ReceiptParseResult(val result: Map<String, String>)
+data class ParsedEntry(val title: String, val number: SerializableBigDecimal)
+
+@Serializable
+data class ReceiptParseResult(val entries: List<ParsedEntry>)

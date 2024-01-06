@@ -1,8 +1,7 @@
 package com.finitas.domain.ports
 
-import com.finitas.domain.model.ReceiptBinaryData
-import com.finitas.domain.model.ReceiptParseResult
+import com.finitas.domain.model.Base64Receipt
 
 interface ReceiptRepository {
-    suspend fun parseReceipt(receipt: ReceiptBinaryData): ReceiptParseResult
+    suspend fun parseReceipt(receipt: Base64Receipt): Map<String, String>
 }
