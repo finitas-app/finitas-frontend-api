@@ -37,7 +37,7 @@ data class IdSpendingSummary(
 @Serializable
 data class RegularSpendingDto(
     val actualizationPeriod: Int,
-    val currency: Int,
+    val currency: CurrencyValue,
     val periodUnit: Int,
     @Serializable(LocalDateTimeSerializer::class)
     val lastActualizationDate: LocalDateTime,
