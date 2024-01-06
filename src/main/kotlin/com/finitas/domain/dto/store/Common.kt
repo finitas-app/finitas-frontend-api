@@ -5,7 +5,7 @@ import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IdUserWithEntities<T> (
+data class IdUserWithEntities<T>(
     val idUser: SerializableUUID,
     val changedValues: List<T>
 )

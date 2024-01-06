@@ -2,7 +2,6 @@ package com.finitas.domain.ports
 
 import com.finitas.domain.api.ChangeSpendingCategoryDto
 import com.finitas.domain.api.SyncCategoriesRequest
-import com.finitas.domain.api.SyncCategoriesResponse
 import com.finitas.domain.api.UserWithCategoriesDto
 import com.finitas.domain.dto.store.*
 import kotlinx.serialization.Serializable

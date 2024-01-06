@@ -3,10 +3,8 @@ package com.finitas.domain.api
 import com.finitas.domain.dto.store.DeleteFinishedSpendingRequest
 import com.finitas.domain.dto.store.FinishedSpendingDto
 import com.finitas.domain.dto.store.IdUserWithVersion
-import com.finitas.domain.model.Permission
 import com.finitas.domain.services.FinishedSpendingStoreService
 import com.finitas.domain.services.UserRoleService
-import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*

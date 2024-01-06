@@ -4,7 +4,6 @@ import com.finitas.config.serialization.LocalDateTimeSerializer
 import com.finitas.config.serialization.SerializableUUID
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
-import java.util.*
 
 @Serializable
 data class UserIdValue(
@@ -38,6 +37,7 @@ data class IdSpendingSummary(
 @Serializable
 data class RegularSpendingDto(
     val actualizationPeriod: Int,
+    val currency: Int,
     val periodUnit: Int,
     @Serializable(LocalDateTimeSerializer::class)
     val lastActualizationDate: LocalDateTime,

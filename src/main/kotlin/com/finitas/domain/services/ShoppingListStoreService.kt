@@ -82,7 +82,7 @@ class ShoppingListStoreService(
     suspend fun deleteShoppingList(requester: UUID, request: DeleteShoppingListRequest) {
         //TODO: verify requester
         //TODO: use response
-        val response =shoppingListStoreRepository.deleteShoppingList(request)
+        val response = shoppingListStoreRepository.deleteShoppingList(request)
 
         val reachableUsers = reachableUsersRepository
             .getReachableUsersForUser(request.idUser, null)
@@ -125,5 +125,6 @@ class ShoppingListStoreService(
     }
 
 
-    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>) = shoppingListStoreRepository.fetchUsersUpdates(request)
+    suspend fun fetchUsersUpdates(request: List<IdUserWithVersion>) =
+        shoppingListStoreRepository.fetchUsersUpdates(request)
 }

@@ -80,6 +80,7 @@ fun Route.userStoreRouting() {
     }
 
 }
+
 @Serializable
 data class SyncCategoriesResponse(
     val userCategories: List<UserWithCategoriesDto>,
