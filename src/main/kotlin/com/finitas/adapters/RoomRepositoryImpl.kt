@@ -34,7 +34,11 @@ class RoomRepositoryImpl(private val urlProvider: UrlProvider) : RoomRepository 
         }.body()
     }
 
-    override suspend fun changeRoomName(requester: UUID, idRoom: UUID, changeRoomNameRequest: ChangeRoomNameRequest): UsersToNotifyResponse {
+    override suspend fun changeRoomName(
+        requester: UUID,
+        idRoom: UUID,
+        changeRoomNameRequest: ChangeRoomNameRequest
+    ): UsersToNotifyResponse {
         return httpClient.patch("${urlProvider.ROOM_MANAGER_HOST_URL}/rooms/name") {
             setRoomAuthorization(requester, idRoom)
             setBody(changeRoomNameRequest)

@@ -10,7 +10,7 @@ import java.util.*
 
 class ReachableUsersRepositoryImpl(
     private val urlProvider: UrlProvider,
-): ReachableUsersRepository {
+) : ReachableUsersRepository {
     override suspend fun getReachableUsersForUser(idUser: UUID, idRoom: UUID?): ReachableUsersDto {
         val response: ReachableUsersDto = httpClient.get("${urlProvider.ROOM_MANAGER_HOST_URL}/rooms/users") {
             parameter("idUser", idUser)

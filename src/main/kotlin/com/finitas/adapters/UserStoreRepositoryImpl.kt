@@ -5,7 +5,6 @@ import com.finitas.config.httpClient
 import com.finitas.config.urls.UrlProvider
 import com.finitas.domain.api.ChangeSpendingCategoryDto
 import com.finitas.domain.api.SyncCategoriesRequest
-import com.finitas.domain.api.SyncCategoriesResponse
 import com.finitas.domain.dto.store.*
 import com.finitas.domain.ports.GetCategoriesFromVersionResponse
 import com.finitas.domain.ports.UserStoreRepository

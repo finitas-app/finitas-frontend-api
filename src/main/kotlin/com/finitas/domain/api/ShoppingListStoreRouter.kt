@@ -3,10 +3,8 @@ package com.finitas.domain.api
 import com.finitas.domain.dto.store.DeleteShoppingListRequest
 import com.finitas.domain.dto.store.IdUserWithVersion
 import com.finitas.domain.dto.store.ShoppingListDto
-import com.finitas.domain.model.Permission
 import com.finitas.domain.services.ShoppingListStoreService
 import com.finitas.domain.services.UserRoleService
-import com.finitas.domain.utils.getIdRoom
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
@@ -58,11 +56,11 @@ fun Route.shoppingListStoreRouting() {
             }
             patch {
                 //TODO: add verify
-               /* userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )*/
+                /* userRoleService.authUserByRoleInRoom(
+                     call.getPetitioner(),
+                     call.getIdRoom(),
+                     Permission.MODIFY_USERS_DATA
+                 )*/
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.updateShoppingList(call.getPetitioner(), request))

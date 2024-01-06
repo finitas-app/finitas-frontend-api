@@ -8,7 +8,6 @@ import com.finitas.domain.api.AssignRoleToUserRequest
 import com.finitas.domain.api.DeleteUserRequest
 import com.finitas.domain.dto.store.UsersToNotifyResponse
 import com.finitas.domain.ports.JoinRoomWithInvitationDto
-import com.finitas.domain.ports.ReachableUsersDto
 import com.finitas.domain.ports.RoomMembersRepository
 import io.ktor.client.call.*
 import io.ktor.client.request.*

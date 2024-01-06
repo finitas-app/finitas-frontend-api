@@ -18,6 +18,13 @@ class FinishedSpendingDto(
     override val idUser: SerializableUUID,
     override val isDeleted: Boolean,
     val idSpendingSummary: SerializableUUID,
+    val currency: CurrencyValue,
     val name: String,
     val spendingRecords: List<SpendingRecordDto>,
-): SynchronizableEntity
+) : SynchronizableEntity
+
+enum class CurrencyValue {
+    PLN,
+    USD,
+    EUR
+}
