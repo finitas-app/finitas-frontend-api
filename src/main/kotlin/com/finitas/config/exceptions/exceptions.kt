@@ -1,6 +1,7 @@
 package com.finitas.config.exceptions
 
 import io.ktor.http.*
+import java.util.UUID
 
 open class BaseException(
     message: String,
@@ -15,7 +16,7 @@ class NotFoundException(
     cause: Exception? = null,
 ) : BaseException(message, errorCode, cause, HttpStatusCode.NotFound)
 
-class ForbiddenException(
+open class ForbiddenException(
     message: String = "Forbidden",
     errorCode: ErrorCode,
     cause: Exception? = null,
@@ -53,3 +54,7 @@ class ExternalErrorException(
     errorCode = errorResponse.errorCode,
     statusCode = statusCode,
 )
+
+class NotEnoughAuthorityToOperateOnUserException(
+    idUser: UUID,
+): ForbiddenException("User have not authority to operate on user '$idUser'", ErrorCode.NOT_ENOUGH_AUTHORITY)

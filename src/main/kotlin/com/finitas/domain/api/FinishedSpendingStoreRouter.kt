@@ -17,7 +17,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.finishedSpendingStoreRouting() {
     val finishedSpendingsService by inject<FinishedSpendingStoreService>()
-    val userRoleService by inject<UserRoleService>()
 
     route("/finished-spendings") {
         authenticate {
@@ -34,13 +33,13 @@ fun Route.finishedSpendingStoreRouting() {
                     // todo: verify allowance to fetch users
                     val request = call.receive<List<IdUserWithVersion>>()
                     call.respond(
-                        finishedSpendingsService.fetchUsersUpdates(request)
+                        finishedSpendingsService.fetchUsersUpdates(call.getPetitioner(), request)
                     )
                 }
             }
             get("/{idUser}") {
 
-                call.respond(finishedSpendingsService.getAllFinishedSpendings(call.getIdUser()))
+                call.respond(finishedSpendingsService.getAllFinishedSpendings(call.getPetitioner(), call.getIdUser()))
             }
             post {
 
