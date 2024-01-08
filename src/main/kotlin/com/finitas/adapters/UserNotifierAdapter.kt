@@ -16,16 +16,21 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 
-private val connections: MutableMap<UUID, DefaultWebSocketSession> = ConcurrentHashMap()
+private val connections = ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, DefaultWebSocketSession>>()
 
 fun Route.userNotifier() {
     webSocket("/synchronizations") {
         val idUser = call.getPetitioner()
-        connections[idUser] = this
+        val idConnection = UUID.randomUUID()
+        connections.getOrPut(idUser) { ConcurrentHashMap() }[idConnection] = this
 
         incoming.consumeEach {}
 
-        connections.remove(idUser)
+        if (connections[idUser]?.size == 1) {
+            connections.remove(idUser)
+        } else {
+            connections[idUser]?.remove(idConnection)
+        }
     }
 }
 
@@ -34,16 +39,18 @@ class UserNotifierAdapter : UserNotifierPort {
     override suspend fun notifyUser(userNotificationDto: UserNotificationDto) {
         logger.info("Notify users: $userNotificationDto")
         userNotificationDto.targetUsers.forEach { (targetUsers, jsonData) ->
-            targetUsers.forEach {
-                val connection = connections[it]
-                connection?.send(
-                    Json.encodeToString(
-                        UserNotification(
-                            userNotificationDto.event,
-                            jsonData,
+            targetUsers.forEach { idUser ->
+                val connection = connections[idUser]
+                connection?.values?.forEach {
+                    it.send(
+                        Json.encodeToString(
+                            UserNotification(
+                                userNotificationDto.event,
+                                jsonData,
+                            )
                         )
                     )
-                )
+                }
             }
         }
     }
