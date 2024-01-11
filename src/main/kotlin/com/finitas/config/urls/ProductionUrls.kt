@@ -9,4 +9,5 @@ object ProductionUrls : UrlProvider {
     override val RECEIPT_PARSING_TIMEOUT = 30000L
     override val STORE_HOST_URL = "http://fms-service:8082/api/store"
     override val ROOM_MANAGER_HOST_URL = "http://rm-service:8083/api"
+    override val REDIS_HOST_URL = "0.0.0.0:6379"
 }

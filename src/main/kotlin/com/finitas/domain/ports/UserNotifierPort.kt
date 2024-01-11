@@ -1,17 +1,19 @@
 package com.finitas.domain.ports
 
 import com.finitas.config.serialization.SerializableUUID
+import kotlinx.serialization.Serializable
 
 interface UserNotifierPort {
     suspend fun notifyUser(userNotificationDto: UserNotificationDto)
 }
 
-
+@Serializable
 data class UserNotificationDto(
     val event: UserNotificationEvent,
     val targetUsers: List<TargetUsersNotificationDto>,
 )
 
+@Serializable
 data class TargetUsersNotificationDto(
     val targetUsers: List<SerializableUUID>,
     val jsonData: String? = null,

@@ -53,6 +53,6 @@ val roomModule = module {
 }
 
 val notificationModule = module {
-    single<UserNotifierPort> { UserNotifierAdapter() }
+    single<UserNotifierPort> { UserNotifierAdapter(get()) }
     single<ReachableUsersRepository> { ReachableUsersRepositoryImpl(get()) }
 }
