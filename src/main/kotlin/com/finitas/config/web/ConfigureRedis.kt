@@ -17,7 +17,7 @@ fun Application.configureRedis() {
     val urlProvider: UrlProvider by inject()
 
     launch(Dispatchers.Default) {
-        newSubscriberClient(Endpoint.from(urlProvider.REDIS_HOST_URL), KredsSubscription).use { redisClient ->
+        newSubscriberClient(Endpoint.from(urlProvider.REDIS_HOST_URL), KredsSubscription(this)).use { redisClient ->
             while (isActive) {
                 try {
                     redisClient.subscribe(userEventChannelName)

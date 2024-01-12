@@ -9,5 +9,5 @@ object DockerUrls : UrlProvider {
     override val RECEIPT_PARSING_TIMEOUT = 8000L
     override val STORE_HOST_URL = "http://finance-manager-store:8082/api/store"
     override val ROOM_MANAGER_HOST_URL = "http://room-manager:8083/api"
-    override val REDIS_HOST_URL = "0.0.0.0:6379"
+    override val REDIS_HOST_URL = "user-notify-balancer:6379"
 }

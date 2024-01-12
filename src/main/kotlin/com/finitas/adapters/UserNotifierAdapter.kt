@@ -13,6 +13,7 @@ import io.github.crackthecodeabhi.kreds.connection.newClient
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -41,7 +42,7 @@ fun Route.userNotifier() {
 
 val userEventChannelName = "user_event"
 
-object KredsSubscription : AbstractKredsSubscriber() {
+class KredsSubscription(private val coroutineScope: CoroutineScope) : AbstractKredsSubscriber() {
     private val logger by Logger()
 
     override fun onException(ex: Throwable) {
@@ -60,12 +61,34 @@ object KredsSubscription : AbstractKredsSubscriber() {
 
     override fun onMessage(channel: String, message: String) {
         if (channel == userEventChannelName) {
-            println("*************************************************\nReceive message from channel. Message: $message\n*************************************************")
+            val userNotificationDto: UserNotificationDto = Json.decodeFromString(message)
+            logger.info("Notify users: $userNotificationDto")
+            userNotificationDto.targetUsers.forEach { (targetUsers, jsonData) ->
+                targetUsers.forEach { idUser ->
+                    val connection = connections[idUser]
+                    connection?.values?.forEach {
+                        coroutineScope.launch(Dispatchers.Default) {
+                            try {
+
+                                it.send(
+                                    Json.encodeToString(
+                                        UserNotification(
+                                            userNotificationDto.event,
+                                            jsonData,
+                                        )
+                                    )
+                                )
+                            }catch (e: Exception) {
+                                logger.info("Failed to notify the user '$idUser'.")
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
-
-//private val redisClient: KredsClient = newClient(Endpoint("0.0.0.0", 8080))
 
 class UserNotifierAdapter(
     private val urlProvider: UrlProvider,
@@ -74,28 +97,13 @@ class UserNotifierAdapter(
     private val redisClient = newClient(Endpoint.from(urlProvider.REDIS_HOST_URL))
 
     override suspend fun notifyUser(userNotificationDto: UserNotificationDto) {
-        logger.info("Notify users: $userNotificationDto")
+        logger.info("Push dto for notification: $userNotificationDto")
         try {
 
             redisClient.publish(userEventChannelName, Json.encodeToString(userNotificationDto))
         } catch (e: KredsConnectionException) {
             logger.error("Failed to notify users. Redis is not available.")
         }
-        /*userNotificationDto.targetUsers.forEach { (targetUsers, jsonData) ->
-            targetUsers.forEach { idUser ->
-                val connection = connections[idUser]
-                connection?.values?.forEach {
-                    it.send(
-                        Json.encodeToString(
-                            UserNotification(
-                                userNotificationDto.event,
-                                jsonData,
-                            )
-                        )
-                    )
-                }
-            }
-        }*/
     }
 }
 

@@ -22,12 +22,6 @@ data class Response(val message: String, val userId: String)
 
 fun Route.authRouting() {
     val service by inject<AuthService>()
-    val userNotifierPort: UserNotifierPort by inject()
-    get("/test") {
-        userNotifierPort.notifyUser(UserNotificationDto(UserNotificationEvent.USERNAME_CHANGE, listOf(
-            TargetUsersNotificationDto(listOf(), "Something")
-        )))
-    }
     route("/auth") {
         post("/login") {
             call.receive<AuthUserRequest>()
