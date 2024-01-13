@@ -21,13 +21,9 @@ val storeModule = module {
     single<ShoppingListStoreRepository> { ShoppingListStoreRepositoryImpl(get()) }
     single<UserStoreRepository> { UserStoreRepositoryImpl(get()) }
 
-    single<UserRoleRepository> { UserRoleRepositoryImpl() }
-
     single<FinishedSpendingStoreService> { FinishedSpendingStoreService(get(), get(), get()) }
     single<ShoppingListStoreService> { ShoppingListStoreService(get(), get(), get()) }
     single<UserStoreService> { UserStoreService(get(), get(), get()) }
-
-    single<UserRoleService> { UserRoleService(get()) }
 }
 
 val receiptModule = module {

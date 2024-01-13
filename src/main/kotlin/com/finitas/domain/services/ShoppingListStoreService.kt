@@ -10,7 +10,6 @@ class ShoppingListStoreService(
     private val reachableUsersRepository: ReachableUsersRepository,
 ) {
     suspend fun synchronizeShoppingLists(request: SynchronizationRequest<ShoppingListDto>): SynchronizationResponse<ShoppingListDto> {
-        //TODO: verify requester
         val reachableUsers = reachableUsersRepository
             .getReachableUsersForUser(request.idUser, null)
             .reachableUsers
@@ -36,8 +35,6 @@ class ShoppingListStoreService(
         shoppingListStoreRepository.getAllShoppingLists(idUser)
 
     suspend fun createShoppingList(requester: UUID, dto: ShoppingListDto) {
-
-        //TODO: verify requester
         //TODO: use response
         val response = shoppingListStoreRepository.createShoppingList(dto)
 
@@ -59,7 +56,6 @@ class ShoppingListStoreService(
 
 
     suspend fun updateShoppingList(requester: UUID, dto: ShoppingListDto) {
-        //TODO: verify requester
         //TODO: use response
         val response = shoppingListStoreRepository.updateShoppingList(dto)
 
@@ -80,7 +76,6 @@ class ShoppingListStoreService(
     }
 
     suspend fun deleteShoppingList(requester: UUID, request: DeleteShoppingListRequest) {
-        //TODO: verify requester
         //TODO: use response
         val response = shoppingListStoreRepository.deleteShoppingList(request)
 
@@ -101,7 +96,6 @@ class ShoppingListStoreService(
     }
 
     suspend fun updateWithChangedItems(request: List<ShoppingListDto>, petitioner: UUID) {
-        //TODO: verify requester
         val reachableUsers = reachableUsersRepository
             .getReachableUsersForUser(petitioner, null)
             .reachableUsers

@@ -11,7 +11,6 @@ class RoomMembersService(
 ) {
     suspend fun addUserToRoomWithInvitationLink(joinRoomWithInvitationDto: JoinRoomWithInvitationDto) {
         val response = roomMembersRepository.addUserToRoomWithInvitationLink(joinRoomWithInvitationDto)
-        //todo: notify partly but not whole room
         notifierPort.notifyUser(
             UserNotificationDto(
                 UserNotificationEvent.ADD_USER_TO_ROOM,

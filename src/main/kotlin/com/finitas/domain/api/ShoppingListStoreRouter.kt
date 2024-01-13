@@ -4,7 +4,6 @@ import com.finitas.domain.dto.store.DeleteShoppingListRequest
 import com.finitas.domain.dto.store.IdUserWithVersion
 import com.finitas.domain.dto.store.ShoppingListDto
 import com.finitas.domain.services.ShoppingListStoreService
-import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
@@ -17,7 +16,6 @@ import org.koin.ktor.ext.inject
 
 fun Route.shoppingListStoreRouting() {
     val shoppingListStoreService by inject<ShoppingListStoreService>()
-    val userRoleService by inject<UserRoleService>()
 
     route("/shopping-lists") {
         authenticate {
@@ -31,7 +29,6 @@ fun Route.shoppingListStoreRouting() {
                     call.respond(HttpStatusCode.NoContent)
                 }
                 post {
-                    // todo: verify allowance to fetch users
                     val request = call.receive<List<IdUserWithVersion>>()
                     call.respond(
                         HttpStatusCode.OK,
@@ -44,23 +41,10 @@ fun Route.shoppingListStoreRouting() {
                 call.respond(shoppingListStoreService.getAllShoppingLists(call.getIdUser()))
             }
             post {
-                //TODO: add verify
-                /*userRoleService.authUserByRoleInRoom(
-                    call.getPetitioner(),
-                    call.getIdRoom(),
-                    Permission.MODIFY_USERS_DATA
-                )*/
-
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.createShoppingList(call.getPetitioner(), request))
             }
             patch {
-                //TODO: add verify
-                /* userRoleService.authUserByRoleInRoom(
-                     call.getPetitioner(),
-                     call.getIdRoom(),
-                     Permission.MODIFY_USERS_DATA
-                 )*/
 
                 val request = call.receive<ShoppingListDto>()
                 call.respond(shoppingListStoreService.updateShoppingList(call.getPetitioner(), request))

@@ -25,7 +25,6 @@ import java.util.*
 fun Route.roomRouter() {
     val roomService: RoomService by inject()
     route("/rooms") {
-        // TODO: rewrite it more Rest
         post {
             val userId = call.getPetitioner()
             val response = roomService.createRoom(
@@ -36,7 +35,6 @@ fun Route.roomRouter() {
             )
             call.respond(HttpStatusCode.Created, response)
         }
-        // TODO: rewrite it more Rest
         post("/sync") {
             val userId = call.getPetitioner()
             val response = roomService.getRoomsFromVersions(
@@ -70,7 +68,6 @@ fun Route.roomRouter() {
 fun Route.messageRoute() {
     val roomMessageService: RoomMessageService by inject()
     route("/messages") {
-        // TODO: rewrite it more Rest
         post {
             val userId = call.getPetitioner()
             val response = roomMessageService.sendMessages(
@@ -81,7 +78,6 @@ fun Route.messageRoute() {
             )
             call.respond(HttpStatusCode.OK, response)
         }
-        // TODO: rewrite it more Rest
         post("/sync") {
             val userId = call.getPetitioner()
             val response = roomMessageService.getNewMessages(
@@ -98,21 +94,18 @@ fun Route.messageRoute() {
 fun Route.rolesRoute() {
     val roomRolesService: RoomRolesService by inject()
     route("/roles") {
-        // TODO: rewrite it more Rest
         post {
             val requester = call.getPetitioner()
             val request: AddRoleRequest = call.receive()
             roomRolesService.addRole(requester, request)
             call.respond(HttpStatusCode.NoContent)
         }
-        // TODO: rewrite it more Rest
         put {
             val requester = call.getPetitioner()
             val request: UpdateRoleRequest = call.receive()
             roomRolesService.updateRole(requester, request)
             call.respond(HttpStatusCode.NoContent)
         }
-        // TODO: rewrite it more Rest
         delete {
             val requester = call.getPetitioner()
             val request: DeleteRoleRequest = call.receive()
@@ -125,21 +118,18 @@ fun Route.rolesRoute() {
 fun Route.roomMembersRoute() {
     val roomMembersService: RoomMembersService by inject()
     route("/users") {
-        // TODO: rewrite it more Rest
         post {
             val requester = call.getPetitioner()
             val request: JoinRoomWithInvitationRequest = call.receive()
             roomMembersService.addUserToRoomWithInvitationLink(request.toDto(requester))
             call.respond(HttpStatusCode.NoContent)
         }
-        // TODO: rewrite it more Rest
         delete {
             val requester = call.getPetitioner()
             val request: DeleteUserRequest = call.receive()
             roomMembersService.deleteUserFromRoom(requester, request)
             call.respond(HttpStatusCode.NoContent)
         }
-        // TODO: rewrite it more Rest
         put("/roles") {
             val requester = call.getPetitioner()
             val request: AssignRoleToUserRequest = call.receive()

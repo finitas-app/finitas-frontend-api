@@ -4,7 +4,6 @@ import com.finitas.domain.dto.store.DeleteFinishedSpendingRequest
 import com.finitas.domain.dto.store.FinishedSpendingDto
 import com.finitas.domain.dto.store.IdUserWithVersion
 import com.finitas.domain.services.FinishedSpendingStoreService
-import com.finitas.domain.services.UserRoleService
 import com.finitas.domain.utils.getIdUser
 import com.finitas.domain.utils.getPetitioner
 import io.ktor.http.*
@@ -30,7 +29,6 @@ fun Route.finishedSpendingStoreRouting() {
                     call.respond(HttpStatusCode.NoContent)
                 }
                 post {
-                    // todo: verify allowance to fetch users
                     val request = call.receive<List<IdUserWithVersion>>()
                     call.respond(
                         finishedSpendingsService.fetchUsersUpdates(call.getPetitioner(), request)

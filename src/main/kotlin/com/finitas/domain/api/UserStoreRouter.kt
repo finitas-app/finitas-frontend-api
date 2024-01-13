@@ -22,7 +22,6 @@ fun Route.userStoreRouting() {
                 call.respond(userStoreService.getUser(call.getPetitioner()))
             }
             get {
-                // todo: dania - fetch only allowed users
                 call.respond(userStoreService.getUsers(listOf()))
             }
             route("/categories") {

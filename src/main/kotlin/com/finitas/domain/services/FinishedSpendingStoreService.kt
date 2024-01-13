@@ -52,7 +52,6 @@ class FinishedSpendingStoreService(
         if (dto.idUser !in reachableUsersForDeletion) {
             throw NotEnoughAuthorityToOperateOnUserException(dto.idUser)
         }
-        //TODO: verify requester
         //TODO: use response
         repository.createFinishedSpending(dto)
 
@@ -82,7 +81,6 @@ class FinishedSpendingStoreService(
         if (dto.idUser !in reachableUsersForDeletion) {
             throw NotEnoughAuthorityToOperateOnUserException(dto.idUser)
         }
-        //TODO: verify requester
         //TODO: use response
         repository.updateFinishedSpending(dto)
 
@@ -112,7 +110,6 @@ class FinishedSpendingStoreService(
         if (request.idUser !in reachableUsersForDeletion) {
             throw NotEnoughAuthorityToOperateOnUserException(request.idUser)
         }
-        //TODO: verify requester
         //TODO: use response
         repository.deleteFinishedSpending(request)
 

@@ -83,7 +83,6 @@ class UserStoreService(
             .getReachableUsersForUser(requester)
             .reachableUsers
             .toSet()
-        // TODO: send unavailableUsers to client
         return SyncCategoriesResponse(
             repository
                 .getCategoriesFromVersions(
