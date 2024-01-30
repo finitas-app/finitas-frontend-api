@@ -84,6 +84,8 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     private val weakPasswordMessage = "PasswordStrengthError: Password is too weak"
     private val emailValidationFailedMessageBeginning =
         "Payload validation error: 'Object didn't pass validation for format email:"
+    private val passwordIsEmptyFailedMessage =
+        "Payload validation error: 'String is too short (0 chars), minimum 1' on property password (Initial password for this user (mandatory only for auth0 connection strategy))"
     private val apiTokenExpiredMessage = "Expired token received for JSON Web Token validation"
     private val userIdPrefix = "auth0|"
 
@@ -124,7 +126,7 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
         logger.error("Error response: ${response.bodyAsText()}, HTTP code: ${response.status}")
 
         throw when (response.status) {
-            HttpStatusCode.Forbidden -> UnauthorizedException(message = "Login failed")
+            HttpStatusCode.Forbidden, HttpStatusCode.BadRequest -> UnauthorizedException(message = "Login failed")
             else -> InternalServerException(message = "Failed to login user", errorCode = ErrorCode.AUTH_ERROR)
         }
     }
@@ -193,8 +195,11 @@ class AuthZeroRepositoryImpl(private val urlProvider: UrlProvider) : AuthReposit
     private suspend fun handleBadRequestResponseWithBaseException(response: HttpResponse): BaseException {
         val body = response.body<SignupAuth0UserBadRequestResponse>()
         val statusCode =
-            if (body.message == weakPasswordMessage) ErrorCode.SIGN_UP_PASSWORD_WEAK
-            else if (body.message.startsWith(emailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
+            if (
+                body.message == weakPasswordMessage
+                || body.message.contains(passwordIsEmptyFailedMessage)
+            ) ErrorCode.SIGN_UP_PASSWORD_WEAK
+            else if (body.message.contains(emailValidationFailedMessageBeginning)) ErrorCode.SIGN_UP_LOGIN_INVALID
             else ErrorCode.AUTH_ERROR
 
         return if (statusCode != ErrorCode.AUTH_ERROR) BadRequestException(
